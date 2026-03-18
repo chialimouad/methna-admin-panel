@@ -160,6 +160,114 @@ export interface EmailBlacklist {
   createdAt: string
 }
 
+export interface Conversation {
+  id: string
+  matchId: string
+  participant1Id: string
+  participant2Id: string
+  lastMessageAt?: string
+  isMuted?: boolean
+  unreadCount?: number
+  createdAt: string
+  participant1?: User
+  participant2?: User
+  lastMessage?: Message
+}
+
+export interface Message {
+  id: string
+  conversationId: string
+  senderId: string
+  content: string
+  type: string
+  isRead: boolean
+  isDelivered: boolean
+  createdAt: string
+  sender?: User
+}
+
+export interface Match {
+  id: string
+  user1Id: string
+  user2Id: string
+  matchedAt: string
+  isActive: boolean
+  user1?: User
+  user2?: User
+  conversation?: Conversation
+}
+
+export interface Notification {
+  id: string
+  userId: string
+  type: string
+  title: string
+  body: string
+  isRead: boolean
+  data?: Record<string, any>
+  createdAt: string
+}
+
+export interface Swipe {
+  id: string
+  swiperId: string
+  targetId: string
+  type: 'like' | 'super_like' | 'compliment' | 'pass'
+  message?: string
+  createdAt: string
+  swiper?: User
+  target?: User
+}
+
+export interface MonetizationStatus {
+  subscription: Subscription | null
+  features: Record<string, boolean>
+  limits: Record<string, number>
+  boost?: {
+    isActive: boolean
+    expiresAt?: string
+  }
+}
+
+export interface Device {
+  id: string
+  userId: string
+  deviceType: string
+  deviceName?: string
+  lastUsedAt: string
+  createdAt: string
+}
+
+export interface LoginHistoryEntry {
+  id: string
+  userId: string
+  ip: string
+  userAgent?: string
+  success: boolean
+  createdAt: string
+}
+
+export interface SubscriptionPlanFeatures {
+  plan: SubscriptionPlan
+  name: string
+  price?: number
+  features: string[]
+}
+
+export interface CompatibilityScore {
+  userId: string
+  targetUserId: string
+  score: number
+  breakdown?: Record<string, number>
+}
+
+export interface NotificationSettings {
+  matchNotifications: boolean
+  messageNotifications: boolean
+  likeNotifications: boolean
+  notificationsEnabled: boolean
+}
+
 // ── API Responses ────────────────────────────────────────────
 
 export interface PaginatedResponse<T> {

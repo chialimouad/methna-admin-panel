@@ -138,4 +138,101 @@ export const securityApi = {
     api.post('/security/admin/blacklist', { domain, reason }),
   removeFromBlacklist: (domain: string) =>
     api.delete(`/security/admin/blacklist/${domain}`),
+  getDevices: () => api.get('/security/devices'),
+  revokeDevice: (id: string) => api.delete(`/security/devices/${id}`),
+  getLoginHistory: () => api.get('/security/login-history'),
+}
+
+// ── Matching ────────────────────────────────────────────────
+
+export const matchingApi = {
+  getSmartSuggestions: () => api.get('/matching/smart-suggestions'),
+  precomputeCompatibility: () => api.post('/matching/precompute-compatibility'),
+  getCompatibility: (targetUserId: string) =>
+    api.get(`/matching/compatibility/${targetUserId}`),
+}
+
+// ── Monetization ────────────────────────────────────────────
+
+export const monetizationApi = {
+  getStatus: () => api.get('/monetization/status'),
+  getFeatures: () => api.get('/monetization/features'),
+  getRemainingLikes: () => api.get('/monetization/remaining-likes'),
+  subscribe: (plan: string) => api.post('/monetization/subscribe', { plan }),
+  purchaseBoost: () => api.post('/monetization/boost'),
+  getBoostStatus: () => api.get('/monetization/boost'),
+}
+
+// ── Subscriptions ───────────────────────────────────────────
+
+export const subscriptionsApi = {
+  getMe: () => api.get('/subscriptions/me'),
+  create: (plan: string) => api.post('/subscriptions', { plan }),
+  cancel: () => api.delete('/subscriptions'),
+  getPlans: () => api.get('/subscriptions/plans'),
+}
+
+// ── Chat ────────────────────────────────────────────────────
+
+export const chatApi = {
+  getConversations: () => api.get('/chat/conversations'),
+  getMessages: (conversationId: string) =>
+    api.get(`/chat/conversations/${conversationId}/messages`),
+  markRead: (conversationId: string) =>
+    api.patch(`/chat/conversations/${conversationId}/read`),
+  markDelivered: (conversationId: string) =>
+    api.patch(`/chat/conversations/${conversationId}/delivered`),
+  muteConversation: (conversationId: string) =>
+    api.patch(`/chat/conversations/${conversationId}/mute`),
+  getUnreadCount: () => api.get('/chat/unread'),
+}
+
+// ── Notifications ───────────────────────────────────────────
+
+export const notificationsApi = {
+  getAll: () => api.get('/notifications'),
+  getUnreadCount: () => api.get('/notifications/unread-count'),
+  markRead: (id: string) => api.patch(`/notifications/${id}/read`),
+  markAllRead: () => api.patch('/notifications/read-all'),
+  remove: (id: string) => api.delete(`/notifications/${id}`),
+  getSettings: () => api.get('/notifications/settings'),
+  updateSettings: (settings: Record<string, boolean>) =>
+    api.patch('/notifications/settings', settings),
+}
+
+// ── Search ──────────────────────────────────────────────────
+
+export const searchApi = {
+  search: (params: Record<string, any>) =>
+    api.get('/search', { params }),
+}
+
+// ── Matches ─────────────────────────────────────────────────
+
+export const matchesApi = {
+  getAll: () => api.get('/matches'),
+  getSuggestions: () => api.get('/matches/suggestions'),
+  getNearby: () => api.get('/matches/nearby'),
+  getDiscover: () => api.get('/matches/discover'),
+  unmatch: (id: string) => api.delete(`/matches/${id}`),
+}
+
+// ── Swipes ──────────────────────────────────────────────────
+
+export const swipesApi = {
+  swipe: (targetUserId: string, type: string, message?: string) =>
+    api.post('/swipes', { targetUserId, type, message }),
+  whoLikedMe: () => api.get('/swipes/who-liked-me'),
+  getCompatibility: (targetUserId: string) =>
+    api.get(`/swipes/compatibility/${targetUserId}`),
+}
+
+// ── Reports (user-facing) ───────────────────────────────────
+
+export const userReportsApi = {
+  create: (reportedId: string, reason: string, details?: string) =>
+    api.post('/reports', { reportedId, reason, details }),
+  block: (id: string) => api.post(`/reports/block/${id}`),
+  unblock: (id: string) => api.delete(`/reports/block/${id}`),
+  getBlocked: () => api.get('/reports/blocked'),
 }

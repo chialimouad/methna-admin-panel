@@ -14,17 +14,54 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
+  MessageSquare,
+  Bell,
+  Search,
+  CreditCard,
+  Target,
 } from 'lucide-react'
 import { useState } from 'react'
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/users', label: 'Users', icon: Users },
-  { to: '/reports', label: 'Reports', icon: Flag },
-  { to: '/photos', label: 'Photo Moderation', icon: ImageIcon },
-  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/trust-safety', label: 'Trust & Safety', icon: Shield },
-  { to: '/security', label: 'Security', icon: Lock },
+const navSections = [
+  {
+    title: 'Overview',
+    items: [
+      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+      { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+    ],
+  },
+  {
+    title: 'Users & Content',
+    items: [
+      { to: '/users', label: 'Users', icon: Users },
+      { to: '/search', label: 'Search & Discovery', icon: Search },
+      { to: '/reports', label: 'Reports', icon: Flag },
+      { to: '/photos', label: 'Photo Moderation', icon: ImageIcon },
+    ],
+  },
+  {
+    title: 'Social',
+    items: [
+      { to: '/matches', label: 'Matches', icon: Heart },
+      { to: '/matching', label: 'Matching Engine', icon: Target },
+      { to: '/chat', label: 'Chat Moderation', icon: MessageSquare },
+      { to: '/notifications', label: 'Notifications', icon: Bell },
+    ],
+  },
+  {
+    title: 'Business',
+    items: [
+      { to: '/monetization', label: 'Monetization', icon: CreditCard },
+    ],
+  },
+  {
+    title: 'Safety & Security',
+    items: [
+      { to: '/trust-safety', label: 'Trust & Safety', icon: Shield },
+      { to: '/security', label: 'Security', icon: Lock },
+    ],
+  },
 ]
 
 export function Sidebar() {
@@ -55,27 +92,38 @@ export function Sidebar() {
       <Separator className="bg-sidebar-accent" />
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-4 scrollbar-thin">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.to ||
-            (item.to !== '/' && location.pathname.startsWith(item.to))
+      <nav className="flex-1 overflow-y-auto px-2 py-4 scrollbar-thin">
+        {navSections.map((section) => (
+          <div key={section.title} className="mb-3">
+            {!collapsed && (
+              <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+                {section.title}
+              </p>
+            )}
+            <div className="space-y-0.5">
+              {section.items.map((item) => {
+                const isActive = location.pathname === item.to ||
+                  (item.to !== '/' && location.pathname.startsWith(item.to))
 
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-sidebar-accent text-white'
-                  : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
-              )}
-            >
-              <item.icon className="h-5 w-5 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          )
-        })}
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-sidebar-accent text-white'
+                        : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
+                    )}
+                  >
+                    <item.icon className="h-4.5 w-4.5 shrink-0" />
+                    {!collapsed && <span>{item.label}</span>}
+                  </NavLink>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       <Separator className="bg-sidebar-accent" />
