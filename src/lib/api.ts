@@ -82,12 +82,31 @@ export const adminApi = {
   getStats: () => api.get('/admin/stats'),
 
   // Users
-  getUsers: (page = 1, limit = 20, status?: string) =>
-    api.get('/admin/users', { params: { page, limit, status } }),
+  getUsers: (page = 1, limit = 20, status?: string, search?: string, role?: string, plan?: string) =>
+    api.get('/admin/users', { params: { page, limit, status, search, role, plan } }),
+  createUser: (data: { email: string; password: string; firstName: string; lastName: string; role?: string; status?: string }) =>
+    api.post('/admin/users', data),
   getUserDetail: (id: string) => api.get(`/admin/users/${id}`),
+  getUserActivity: (id: string) => api.get(`/admin/users/${id}/activity`),
+  updateUser: (id: string, data: Record<string, any>) =>
+    api.put(`/admin/users/${id}`, data),
   updateUserStatus: (id: string, status: string) =>
     api.patch(`/admin/users/${id}/status`, { status }),
   deleteUser: (id: string) => api.delete(`/admin/users/${id}`),
+
+  // Swipes / Activity
+  getSwipes: (page = 1, limit = 20, type?: string) =>
+    api.get('/admin/swipes', { params: { page, limit, type } }),
+
+  // Matches
+  getMatches: (page = 1, limit = 20) =>
+    api.get('/admin/matches', { params: { page, limit } }),
+
+  // Conversations
+  getConversations: (page = 1, limit = 20) =>
+    api.get('/admin/conversations', { params: { page, limit } }),
+  getConversationMessages: (id: string, page = 1, limit = 50) =>
+    api.get(`/admin/conversations/${id}/messages`, { params: { page, limit } }),
 
   // Reports
   getReports: (page = 1, limit = 20, status?: string) =>
@@ -100,6 +119,30 @@ export const adminApi = {
     api.get('/admin/photos/pending', { params: { page, limit } }),
   moderatePhoto: (id: string, status: string, moderationNote?: string) =>
     api.patch(`/admin/photos/${id}/moderate`, { status, moderationNote }),
+
+  // Notifications
+  sendNotification: (data: { userId?: string; title: string; body: string; type?: string; broadcast?: boolean }) =>
+    api.post('/admin/notifications/send', data),
+
+  // Support Tickets
+  getTickets: (page = 1, limit = 20, status?: string) =>
+    api.get('/admin/tickets', { params: { page, limit, status } }),
+  replyToTicket: (id: string, reply: string, status?: string) =>
+    api.patch(`/admin/tickets/${id}/reply`, { reply, status }),
+
+  // Ads
+  getAds: () => api.get('/admin/ads'),
+  createAd: (data: Record<string, any>) => api.post('/admin/ads', data),
+  updateAd: (id: string, data: Record<string, any>) => api.patch(`/admin/ads/${id}`, data),
+  deleteAd: (id: string) => api.delete(`/admin/ads/${id}`),
+
+  // Boosts
+  getBoosts: (page = 1, limit = 20) =>
+    api.get('/admin/boosts', { params: { page, limit } }),
+
+  // Subscriptions
+  getSubscriptions: (page = 1, limit = 20, plan?: string) =>
+    api.get('/admin/subscriptions', { params: { page, limit, plan } }),
 }
 
 // ── Analytics ────────────────────────────────────────────────

@@ -20,6 +20,14 @@ import {
   Crown,
   Loader2,
   AlertTriangle,
+  Heart,
+  Sparkles,
+  MessageCircleHeart,
+  MessageSquare,
+  HeartOff,
+  Rocket,
+  ShieldBan,
+  BarChart3,
 } from 'lucide-react'
 
 export default function UserDetailPage() {
@@ -28,6 +36,8 @@ export default function UserDetailPage() {
   const [detail, setDetail] = useState<UserDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState('')
+  const [activity, setActivity] = useState<any>(null)
+  const [activityLoading, setActivityLoading] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -35,6 +45,12 @@ export default function UserDetailPage() {
       .then((res) => setDetail(res.data))
       .catch(console.error)
       .finally(() => setLoading(false))
+
+    setActivityLoading(true)
+    adminApi.getUserActivity(id)
+      .then((res) => setActivity(res.data))
+      .catch(console.error)
+      .finally(() => setActivityLoading(false))
   }, [id])
 
   const handleStatusChange = async (status: string) => {
@@ -296,6 +312,110 @@ export default function UserDetailPage() {
               </CardContent>
             </Card>
           )}
+
+          {/* User Activity Stats */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-500" /> User Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {activityLoading ? (
+                <div className="flex h-20 items-center justify-center">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                </div>
+              ) : activity ? (
+                <div className="space-y-4">
+                  <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
+                    <div className="rounded-lg border p-3 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <Heart className="h-4 w-4 text-pink-500" />
+                        <span className="text-xs font-medium">Likes</span>
+                      </div>
+                      <p className="text-lg font-bold">{activity.likes?.given ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">given</p>
+                      <p className="text-lg font-bold text-pink-600">{activity.likes?.received ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">received</p>
+                    </div>
+                    <div className="rounded-lg border p-3 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <Sparkles className="h-4 w-4 text-purple-500" />
+                        <span className="text-xs font-medium">Super Likes</span>
+                      </div>
+                      <p className="text-lg font-bold">{activity.superLikes?.given ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">given</p>
+                      <p className="text-lg font-bold text-purple-600">{activity.superLikes?.received ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">received</p>
+                    </div>
+                    <div className="rounded-lg border p-3 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <MessageCircleHeart className="h-4 w-4 text-amber-500" />
+                        <span className="text-xs font-medium">Compliments</span>
+                      </div>
+                      <p className="text-lg font-bold">{activity.compliments?.given ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">given</p>
+                      <p className="text-lg font-bold text-amber-600">{activity.compliments?.received ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">received</p>
+                    </div>
+                    <div className="rounded-lg border p-3 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <HeartOff className="h-4 w-4 text-gray-500" />
+                        <span className="text-xs font-medium">Passes</span>
+                      </div>
+                      <p className="text-2xl font-bold">{activity.passes ?? 0}</p>
+                    </div>
+                  </div>
+                  <div className="grid gap-3 grid-cols-2 sm:grid-cols-5">
+                    <div className="rounded-lg bg-blue-50 p-3 text-center">
+                      <Heart className="h-4 w-4 text-blue-500 mx-auto mb-1" />
+                      <p className="text-lg font-bold">{activity.matches ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">Matches</p>
+                    </div>
+                    <div className="rounded-lg bg-green-50 p-3 text-center">
+                      <MessageSquare className="h-4 w-4 text-green-500 mx-auto mb-1" />
+                      <p className="text-lg font-bold">{activity.messages ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">Messages Sent</p>
+                    </div>
+                    <div className="rounded-lg bg-orange-50 p-3 text-center">
+                      <Rocket className="h-4 w-4 text-orange-500 mx-auto mb-1" />
+                      <p className="text-lg font-bold">{activity.boosts ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">Boosts</p>
+                    </div>
+                    <div className="rounded-lg bg-red-50 p-3 text-center">
+                      <ShieldBan className="h-4 w-4 text-red-500 mx-auto mb-1" />
+                      <p className="text-lg font-bold">{activity.blocked ?? 0} / {activity.blockedBy ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">Blocked / Blocked By</p>
+                    </div>
+                    <div className="rounded-lg bg-amber-50 p-3 text-center">
+                      <AlertTriangle className="h-4 w-4 text-amber-500 mx-auto mb-1" />
+                      <p className="text-lg font-bold">{activity.reports ?? 0}</p>
+                      <p className="text-[10px] text-muted-foreground">Reports Against</p>
+                    </div>
+                  </div>
+                  {activity.subscription && (
+                    <div className="rounded-lg border p-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-1">Subscription</p>
+                      <div className="flex items-center gap-2">
+                        <Badge className={activity.subscription.plan === 'gold' ? 'bg-amber-500 text-white' : activity.subscription.plan === 'premium' ? 'bg-purple-500 text-white' : ''}>
+                          {activity.subscription.plan?.toUpperCase()}
+                        </Badge>
+                        <Badge variant={activity.subscription.status === 'active' ? 'success' : 'secondary'}>{activity.subscription.status}</Badge>
+                      </div>
+                    </div>
+                  )}
+                  {activity.activeBoost && (
+                    <div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
+                      <p className="text-xs font-medium text-orange-700 mb-1">Active Boost</p>
+                      <p className="text-sm">Type: {activity.activeBoost.type} | Views gained: {activity.activeBoost.profileViewsGained}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Could not load activity data.</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

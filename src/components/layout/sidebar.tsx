@@ -20,6 +20,11 @@ import {
   Search,
   CreditCard,
   Target,
+  Activity,
+  Headphones,
+  Megaphone,
+  Crown,
+  Send,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -43,16 +48,26 @@ const navSections = [
   {
     title: 'Social',
     items: [
+      { to: '/activity', label: 'Activity Monitor', icon: Activity },
       { to: '/matches', label: 'Matches', icon: Heart },
       { to: '/matching', label: 'Matching Engine', icon: Target },
       { to: '/chat', label: 'Chat Moderation', icon: MessageSquare },
+    ],
+  },
+  {
+    title: 'Communication',
+    items: [
       { to: '/notifications', label: 'Notifications', icon: Bell },
+      { to: '/send-notifications', label: 'Send Notifications', icon: Send },
+      { to: '/support', label: 'Support Desk', icon: Headphones },
     ],
   },
   {
     title: 'Business',
     items: [
+      { to: '/subscriptions', label: 'Subscriptions', icon: Crown },
       { to: '/monetization', label: 'Monetization', icon: CreditCard },
+      { to: '/ads', label: 'Ad Management', icon: Megaphone },
     ],
   },
   {

@@ -32,6 +32,7 @@ import {
   Shield,
   Trash2,
   Loader2,
+  UserPlus,
 } from 'lucide-react'
 
 const statusBadge = (status: string) => {
@@ -50,8 +51,16 @@ export default function UsersPage() {
   const [page, setPage] = useState(1)
   const [limit] = useState(20)
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [roleFilter, setRoleFilter] = useState<string>('all')
+  const [planFilter, setPlanFilter] = useState<string>('all')
   const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [loading, setLoading] = useState(true)
+
+  // Create user dialog
+  const [createDialog, setCreateDialog] = useState(false)
+  const [createForm, setCreateForm] = useState({ email: '', password: '', firstName: '', lastName: '', role: 'user', status: 'active' })
+  const [createLoading, setCreateLoading] = useState(false)
 
   // Status change dialog
   const [statusDialog, setStatusDialog] = useState<{ open: boolean; user: User | null; newStatus: string }>({
@@ -67,7 +76,9 @@ export default function UsersPage() {
     setLoading(true)
     try {
       const status = statusFilter === 'all' ? undefined : statusFilter
-      const { data } = await adminApi.getUsers(page, limit, status)
+      const role = roleFilter === 'all' ? undefined : roleFilter
+      const plan = planFilter === 'all' ? undefined : planFilter
+      const { data } = await adminApi.getUsers(page, limit, status, search || undefined, role, plan)
       setUsers(data.users || data || [])
       setTotal(data.total || 0)
     } catch (err) {
@@ -77,7 +88,7 @@ export default function UsersPage() {
     }
   }
 
-  useEffect(() => { fetchUsers() }, [page, statusFilter])
+  useEffect(() => { fetchUsers() }, [page, statusFilter, roleFilter, planFilter, search])
 
   const handleStatusChange = async () => {
     if (!statusDialog.user) return
@@ -101,41 +112,90 @@ export default function UsersPage() {
     }
   }
 
-  const filteredUsers = search
-    ? users.filter(u =>
-        u.firstName?.toLowerCase().includes(search.toLowerCase()) ||
-        u.lastName?.toLowerCase().includes(search.toLowerCase()) ||
-        u.email?.toLowerCase().includes(search.toLowerCase())
-      )
-    : users
+  const handleCreateUser = async () => {
+    setCreateLoading(true)
+    try {
+      await adminApi.createUser(createForm)
+      setCreateDialog(false)
+      setCreateForm({ email: '', password: '', firstName: '', lastName: '', role: 'user', status: 'active' })
+      fetchUsers()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to create user')
+    } finally {
+      setCreateLoading(false)
+    }
+  }
+
+  const handleSearchSubmit = () => {
+    setSearch(searchInput)
+    setPage(1)
+  }
+
+  const filteredUsers = users
 
   const totalPages = Math.ceil(total / limit)
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Users</h1>
+          <p className="text-muted-foreground">Manage all user accounts</p>
+        </div>
+        <Button onClick={() => setCreateDialog(true)} className="gap-2">
+          <UserPlus className="h-4 w-4" /> Create User
+        </Button>
+      </div>
+
       {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:w-80">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
+        <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by name or email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
             className="pl-9"
           />
         </div>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1) }}>
-          <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder="Filter by status" />
+          <SelectTrigger className="w-full sm:w-40">
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="active">Active</SelectItem>
             <SelectItem value="suspended">Suspended</SelectItem>
             <SelectItem value="banned">Banned</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value="pending_verification">Pending</SelectItem>
+            <SelectItem value="deactivated">Deactivated</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={roleFilter} onValueChange={(v) => { setRoleFilter(v); setPage(1) }}>
+          <SelectTrigger className="w-full sm:w-36">
+            <SelectValue placeholder="Role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="user">User</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="moderator">Moderator</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={planFilter} onValueChange={(v) => { setPlanFilter(v); setPage(1) }}>
+          <SelectTrigger className="w-full sm:w-36">
+            <SelectValue placeholder="Plan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Plans</SelectItem>
+            <SelectItem value="free">Free</SelectItem>
+            <SelectItem value="premium">Premium</SelectItem>
+            <SelectItem value="gold">Gold</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="sm" onClick={handleSearchSubmit}>Search</Button>
       </div>
 
       {/* Table */}
@@ -290,6 +350,66 @@ export default function UsersPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialog({ open: false, user: null })}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create User Dialog */}
+      <Dialog open={createDialog} onOpenChange={setCreateDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New User</DialogTitle>
+            <DialogDescription>Fill in the details to create a new user account.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium">First Name</label>
+                <Input value={createForm.firstName} onChange={(e) => setCreateForm({ ...createForm, firstName: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs font-medium">Last Name</label>
+                <Input value={createForm.lastName} onChange={(e) => setCreateForm({ ...createForm, lastName: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium">Email</label>
+              <Input type="email" value={createForm.email} onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })} />
+            </div>
+            <div>
+              <label className="text-xs font-medium">Password</label>
+              <Input type="password" value={createForm.password} onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium">Role</label>
+                <Select value={createForm.role} onValueChange={(v) => setCreateForm({ ...createForm, role: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="moderator">Moderator</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-xs font-medium">Status</label>
+                <Select value={createForm.status} onValueChange={(v) => setCreateForm({ ...createForm, status: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                    <SelectItem value="pending_verification">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreateUser} disabled={createLoading || !createForm.email || !createForm.password || !createForm.firstName || !createForm.lastName}>
+              {createLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create User'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

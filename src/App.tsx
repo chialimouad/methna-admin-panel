@@ -16,6 +16,11 @@ import ChatPage from '@/pages/chat'
 import NotificationsPage from '@/pages/notifications'
 import SearchUsersPage from '@/pages/search-users'
 import MatchesPage from '@/pages/matches'
+import ActivityPage from '@/pages/activity'
+import SupportPage from '@/pages/support'
+import AdsPage from '@/pages/ads'
+import SubscriptionsPage from '@/pages/subscriptions'
+import SendNotificationsPage from '@/pages/send-notifications'
 
 export default function App() {
   return (
@@ -35,6 +40,11 @@ export default function App() {
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/search" element={<SearchUsersPage />} />
             <Route path="/monetization" element={<MonetizationPage />} />
+            <Route path="/activity" element={<ActivityPage />} />
+            <Route path="/support" element={<SupportPage />} />
+            <Route path="/ads" element={<AdsPage />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
+            <Route path="/send-notifications" element={<SendNotificationsPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/trust-safety" element={<TrustSafetyPage />} />
             <Route path="/security" element={<SecurityPage />} />
