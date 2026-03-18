@@ -36,7 +36,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary shadow-lg">
             <Heart className="h-7 w-7 text-white" />
           </div>
-          <CardTitle className="text-2xl">Wafaa Admin</CardTitle>
+          <CardTitle className="text-2xl">Methna Admin</CardTitle>
           <CardDescription>Sign in with your admin credentials</CardDescription>
         </CardHeader>
         <CardContent>
@@ -54,7 +54,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@wafaa.app"
+                placeholder="admin@methna.app"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

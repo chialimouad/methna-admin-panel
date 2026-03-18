@@ -1,6 +1,6 @@
-# Wafaa Admin Panel
+# Methna Admin Panel
 
-Professional admin dashboard for the Wafaa matchmaking backend. Built with **React 18 + TypeScript + Vite + TailwindCSS + shadcn/ui + Recharts**.
+Professional admin dashboard for the Methna matchmaking backend. Built with **React 18 + TypeScript + Vite + TailwindCSS + shadcn/ui + Recharts**.
 
 ## Pages
 
