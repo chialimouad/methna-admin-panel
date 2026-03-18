@@ -35,7 +35,7 @@ export default function SecurityPage() {
     setLoading(true)
     try {
       const { data } = await securityApi.getBlacklist()
-      const list = data.data || data
+      const list = data
       setBlacklist(Array.isArray(list) ? list : [])
     } catch (err) {
       console.error(err)

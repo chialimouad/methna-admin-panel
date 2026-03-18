@@ -37,14 +37,14 @@ export default function AnalyticsPage() {
           analyticsApi.getDau(),
         ])
 
-        if (dashRes.status === 'fulfilled') setDashboard(dashRes.value.data.data || dashRes.value.data)
+        if (dashRes.status === 'fulfilled') setDashboard(dashRes.value.data)
         if (matchRes.status === 'fulfilled') {
-          const raw = matchRes.value.data.data || matchRes.value.data
+          const raw = matchRes.value.data
           setMatchesData(Array.isArray(raw) ? raw : [])
         }
-        if (convRes.status === 'fulfilled') setConversion(convRes.value.data.data || convRes.value.data)
-        if (retRes.status === 'fulfilled') setRetention(retRes.value.data.data || retRes.value.data)
-        if (dauRes.status === 'fulfilled') setDau(dauRes.value.data.data || dauRes.value.data)
+        if (convRes.status === 'fulfilled') setConversion(convRes.value.data)
+        if (retRes.status === 'fulfilled') setRetention(retRes.value.data)
+        if (dauRes.status === 'fulfilled') setDau(dauRes.value.data)
       } catch (err) {
         console.error(err)
       } finally {

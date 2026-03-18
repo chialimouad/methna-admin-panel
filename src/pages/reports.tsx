@@ -62,8 +62,8 @@ export default function ReportsPage() {
     try {
       const status = statusFilter === 'all' ? undefined : statusFilter
       const { data } = await adminApi.getReports(page, 20, status)
-      setReports(data.reports || data.data?.reports || [])
-      setTotal(data.total || data.data?.total || 0)
+      setReports(data.reports || data || [])
+      setTotal(data.total || 0)
     } catch (err) {
       console.error(err)
     } finally {

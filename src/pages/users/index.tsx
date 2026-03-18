@@ -68,8 +68,8 @@ export default function UsersPage() {
     try {
       const status = statusFilter === 'all' ? undefined : statusFilter
       const { data } = await adminApi.getUsers(page, limit, status)
-      setUsers(data.users || data.data?.users || [])
-      setTotal(data.total || data.data?.total || 0)
+      setUsers(data.users || data || [])
+      setTotal(data.total || 0)
     } catch (err) {
       console.error('Failed to fetch users:', err)
     } finally {

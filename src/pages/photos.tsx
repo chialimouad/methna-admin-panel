@@ -33,8 +33,8 @@ export default function PhotosPage() {
     setLoading(true)
     try {
       const { data } = await adminApi.getPendingPhotos(page, 20)
-      setPhotos(data.photos || data.data?.photos || [])
-      setTotal(data.total || data.data?.total || 0)
+      setPhotos(data.photos || data || [])
+      setTotal(data.total || 0)
     } catch (err) {
       console.error(err)
     } finally {

@@ -16,6 +16,16 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// Unwrap backend's { success, data, timestamp } envelope
+api.interceptors.response.use(
+  (response) => {
+    if (response.data && typeof response.data === 'object' && 'success' in response.data && 'data' in response.data) {
+      response.data = response.data.data
+    }
+    return response
+  },
+)
+
 // Handle 401 — attempt refresh or redirect to login
 api.interceptors.response.use(
   (response) => response,
@@ -29,16 +39,17 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('refresh_token')
         if (!refreshToken) throw new Error('No refresh token')
 
-        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+        const res = await axios.post(`${API_BASE_URL}/auth/refresh`, {
           refreshToken,
         })
+        const payload = res.data?.data || res.data
 
-        localStorage.setItem('access_token', data.accessToken)
-        if (data.refreshToken) {
-          localStorage.setItem('refresh_token', data.refreshToken)
+        localStorage.setItem('access_token', payload.accessToken)
+        if (payload.refreshToken) {
+          localStorage.setItem('refresh_token', payload.refreshToken)
         }
 
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
+        originalRequest.headers.Authorization = `Bearer ${payload.accessToken}`
         return api(originalRequest)
       } catch {
         localStorage.removeItem('access_token')

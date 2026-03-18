@@ -32,7 +32,7 @@ export default function UserDetailPage() {
   useEffect(() => {
     if (!id) return
     adminApi.getUserDetail(id)
-      .then((res) => setDetail(res.data.data || res.data))
+      .then((res) => setDetail(res.data))
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [id])
@@ -43,7 +43,7 @@ export default function UserDetailPage() {
     try {
       await adminApi.updateUserStatus(id, status)
       const res = await adminApi.getUserDetail(id)
-      setDetail(res.data.data || res.data)
+      setDetail(res.data)
     } catch (err) {
       console.error(err)
     } finally {
@@ -61,7 +61,7 @@ export default function UserDetailPage() {
         await trustSafetyApi.shadowBan(id)
       }
       const res = await adminApi.getUserDetail(id)
-      setDetail(res.data.data || res.data)
+      setDetail(res.data)
     } catch (err) {
       console.error(err)
     } finally {

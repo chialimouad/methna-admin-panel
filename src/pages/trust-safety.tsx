@@ -69,8 +69,8 @@ export default function TrustSafetyPage() {
     setLoading(true)
     try {
       const { data } = await trustSafetyApi.getFlags(page, 20)
-      setFlags(data.flags || data.data?.flags || [])
-      setTotal(data.total || data.data?.total || 0)
+      setFlags(data.flags || data || [])
+      setTotal(data.total || 0)
     } catch (err) {
       console.error(err)
     } finally {
@@ -98,7 +98,7 @@ export default function TrustSafetyPage() {
     setDetectResult(null)
     try {
       const { data } = await trustSafetyApi.detectSuspicious(detectUserId.trim())
-      setDetectResult(data.data || data)
+      setDetectResult(data)
     } catch (err: any) {
       setDetectResult({ error: err.response?.data?.message || 'Detection failed' })
     } finally {
