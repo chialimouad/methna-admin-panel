@@ -7,12 +7,17 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Attach JWT token to every request
+// Attach JWT token + CSRF token + security headers to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  const csrfToken = sessionStorage.getItem('csrf_token')
+  if (csrfToken) {
+    config.headers['X-CSRF-Token'] = csrfToken
+  }
+  config.headers['X-Requested-With'] = 'XMLHttpRequest'
   return config
 })
 
