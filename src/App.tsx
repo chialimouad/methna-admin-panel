@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/auth-context'
+import { ToastProvider } from '@/components/ui/toast'
 import { AdminLayout } from '@/components/layout/admin-layout'
 import LoginPage from '@/pages/login'
 import DashboardPage from '@/pages/dashboard'
@@ -21,36 +22,42 @@ import SupportPage from '@/pages/support'
 import AdsPage from '@/pages/ads'
 import SubscriptionsPage from '@/pages/subscriptions'
 import SendNotificationsPage from '@/pages/send-notifications'
+import VerificationPage from '@/pages/verification'
+import AuditLogsPage from '@/pages/audit-logs'
 
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route element={<AdminLayout />}>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/users/:id" element={<UserDetailPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/photos" element={<PhotosPage />} />
-            <Route path="/matches" element={<MatchesPage />} />
-            <Route path="/matching" element={<MatchingPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/search" element={<SearchUsersPage />} />
-            <Route path="/monetization" element={<MonetizationPage />} />
-            <Route path="/activity" element={<ActivityPage />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/ads" element={<AdsPage />} />
-            <Route path="/subscriptions" element={<SubscriptionsPage />} />
-            <Route path="/send-notifications" element={<SendNotificationsPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/trust-safety" element={<TrustSafetyPage />} />
-            <Route path="/security" element={<SecurityPage />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<AdminLayout />}>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/users/:id" element={<UserDetailPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/photos" element={<PhotosPage />} />
+              <Route path="/verification" element={<VerificationPage />} />
+              <Route path="/matches" element={<MatchesPage />} />
+              <Route path="/matching" element={<MatchingPage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/search" element={<SearchUsersPage />} />
+              <Route path="/monetization" element={<MonetizationPage />} />
+              <Route path="/activity" element={<ActivityPage />} />
+              <Route path="/support" element={<SupportPage />} />
+              <Route path="/ads" element={<AdsPage />} />
+              <Route path="/subscriptions" element={<SubscriptionsPage />} />
+              <Route path="/send-notifications" element={<SendNotificationsPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/trust-safety" element={<TrustSafetyPage />} />
+              <Route path="/security" element={<SecurityPage />} />
+              <Route path="/audit-logs" element={<AuditLogsPage />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   )
 }
