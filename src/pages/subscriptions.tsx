@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react'
 
 export default function SubscriptionsPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [subscriptions, setSubscriptions] = useState<any[]>([])
   const [total, setTotal] = useState(0)
@@ -90,8 +92,8 @@ export default function SubscriptionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Subscriptions & Boosts</h1>
-        <p className="text-muted-foreground">Overview of all user subscriptions, plans, and profile boosts</p>
+        <h1 className="text-2xl font-bold">{t('subscriptions.title')}</h1>
+        <p className="text-muted-foreground">{t('subscriptions.subtitle')}</p>
       </div>
 
       {/* Plan Breakdown */}
@@ -193,25 +195,25 @@ export default function SubscriptionsPage() {
             <SelectValue placeholder="Filter by plan" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Plans</SelectItem>
-            <SelectItem value="free">Free</SelectItem>
-            <SelectItem value="premium">Premium</SelectItem>
-            <SelectItem value="gold">Gold</SelectItem>
+            <SelectItem value="all">{t('users.allPlans')}</SelectItem>
+            <SelectItem value="free">{t('users.free')}</SelectItem>
+            <SelectItem value="premium">{t('users.premium')}</SelectItem>
+            <SelectItem value="gold">{t('users.gold')}</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-sm text-muted-foreground">{total} subscriptions</span>
+        <span className="text-sm text-muted-foreground">{total} {t('nav.subscriptions')}</span>
       </div>
 
       {/* Subscriptions Table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">All Subscriptions</CardTitle>
+          <CardTitle className="text-lg">{t('nav.subscriptions')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex h-40 items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
           ) : subscriptions.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No subscriptions found.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('subscriptions.noSubscriptions')}</p>
           ) : (
             <>
               <div className="overflow-x-auto">
@@ -261,7 +263,7 @@ export default function SubscriptionsPage() {
 
               {totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between border-t pt-4">
-                  <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+                  <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
                       <ChevronLeft className="h-4 w-4" />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -45,6 +46,7 @@ const reasonBadge = (reason: string) => {
 }
 
 export default function ReportsPage() {
+  const { t } = useTranslation()
   const [reports, setReports] = useState<Report[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -61,9 +63,11 @@ export default function ReportsPage() {
     setLoading(true)
     try {
       const status = statusFilter === 'all' ? undefined : statusFilter
-      const { data } = await adminApi.getReports(page, 20, status)
-      setReports(data.reports || data || [])
-      setTotal(data.total || 0)
+      const res = await adminApi.getReports(page, 20, status)
+      const payload = res.data
+      const list = Array.isArray(payload) ? payload : (payload?.reports || [])
+      setReports(list)
+      setTotal(Array.isArray(payload) ? list.length : (payload?.total || list.length))
     } catch (err) {
       console.error(err)
     } finally {
@@ -96,19 +100,19 @@ export default function ReportsPage() {
             <SelectValue placeholder="Filter status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Reports</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
-            <SelectItem value="REVIEWED">Reviewed</SelectItem>
-            <SelectItem value="RESOLVED">Resolved</SelectItem>
-            <SelectItem value="DISMISSED">Dismissed</SelectItem>
+            <SelectItem value="all">{t('reports.allReports')}</SelectItem>
+            <SelectItem value="PENDING">{t('reports.pending')}</SelectItem>
+            <SelectItem value="REVIEWED">{t('reports.reviewed')}</SelectItem>
+            <SelectItem value="RESOLVED">{t('reports.resolved')}</SelectItem>
+            <SelectItem value="DISMISSED">{t('reports.dismissed')}</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-sm text-muted-foreground">{total} reports</span>
+        <span className="text-sm text-muted-foreground">{total} {t('nav.reports')}</span>
       </div>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Reports</CardTitle>
+          <CardTitle className="text-lg">{t('nav.reports')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -120,12 +124,12 @@ export default function ReportsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
-                    <th className="pb-3 pr-4 font-medium">Reporter</th>
-                    <th className="pb-3 pr-4 font-medium">Reported</th>
-                    <th className="pb-3 pr-4 font-medium">Reason</th>
-                    <th className="pb-3 pr-4 font-medium">Status</th>
-                    <th className="pb-3 pr-4 font-medium">Date</th>
-                    <th className="pb-3 font-medium text-right">Actions</th>
+                    <th className="pb-3 pe-4 font-medium">{t('reports.reporter')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('reports.reported')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('reports.reason')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.status')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('reports.date')}</th>
+                    <th className="pb-3 font-medium text-end">{t('users.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -156,7 +160,7 @@ export default function ReportsPage() {
                                 setResolveStatus('RESOLVED')
                               }}
                             >
-                              <CheckCircle className="h-3.5 w-3.5" /> Resolve
+                              <CheckCircle className="h-3.5 w-3.5" /> {t('reports.resolve')}
                             </Button>
                             <Button
                               size="sm"
@@ -167,7 +171,7 @@ export default function ReportsPage() {
                                 setResolveStatus('DISMISSED')
                               }}
                             >
-                              <XCircle className="h-3.5 w-3.5" /> Dismiss
+                              <XCircle className="h-3.5 w-3.5" /> {t('reports.dismiss')}
                             </Button>
                           </div>
                         ) : (
@@ -185,14 +189,14 @@ export default function ReportsPage() {
                 </tbody>
               </table>
               {reports.length === 0 && (
-                <p className="py-8 text-center text-muted-foreground">No reports found.</p>
+                <p className="py-8 text-center text-muted-foreground">{t('reports.noReports')}</p>
               )}
             </div>
           )}
 
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between border-t pt-4">
-              <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+              <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
                   <ChevronLeft className="h-4 w-4" />
@@ -210,7 +214,7 @@ export default function ReportsPage() {
       <Dialog open={resolveDialog.open} onOpenChange={(open) => setResolveDialog({ ...resolveDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Resolve Report</DialogTitle>
+            <DialogTitle>{t('reports.resolve')}</DialogTitle>
             <DialogDescription>
               Report against <strong>{resolveDialog.report?.reported?.firstName} {resolveDialog.report?.reported?.lastName}</strong> for <strong>{resolveDialog.report?.reason}</strong>
             </DialogDescription>
@@ -226,19 +230,19 @@ export default function ReportsPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="RESOLVED">Resolved</SelectItem>
-              <SelectItem value="DISMISSED">Dismissed</SelectItem>
-              <SelectItem value="REVIEWED">Reviewed</SelectItem>
+              <SelectItem value="RESOLVED">{t('reports.resolved')}</SelectItem>
+              <SelectItem value="DISMISSED">{t('reports.dismissed')}</SelectItem>
+              <SelectItem value="REVIEWED">{t('reports.reviewed')}</SelectItem>
             </SelectContent>
           </Select>
           <Textarea
-            placeholder="Moderator note (optional)"
+            placeholder={t('reports.moderatorNote')}
             value={moderatorNote}
             onChange={(e) => setModeratorNote(e.target.value)}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setResolveDialog({ open: false, report: null })}>Cancel</Button>
-            <Button onClick={handleResolve}>Submit</Button>
+            <Button variant="outline" onClick={() => setResolveDialog({ open: false, report: null })}>{t('common.cancel')}</Button>
+            <Button onClick={handleResolve}>{t('common.submit')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { notificationsApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,6 +9,7 @@ import { formatDateTime } from '@/lib/utils'
 import { Loader2, Bell, BellOff, CheckCheck, Trash2, Settings } from 'lucide-react'
 
 export default function NotificationsPage() {
+  const { t } = useTranslation()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [settings, setSettings] = useState<NotificationSettings | null>(null)
@@ -100,8 +102,8 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Notifications</h1>
-        <p className="text-muted-foreground">Monitor and manage system notifications</p>
+        <h1 className="text-2xl font-bold">{t('notifications.title')}</h1>
+        <p className="text-muted-foreground">{t('notifications.subtitle')}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -111,7 +113,7 @@ export default function NotificationsPage() {
               <Bell className="h-6 w-6 text-blue-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total</p>
+              <p className="text-sm text-muted-foreground">{t('common.total')}</p>
               <p className="text-2xl font-bold">{notifications.length}</p>
             </div>
           </CardContent>
@@ -122,7 +124,7 @@ export default function NotificationsPage() {
               <BellOff className="h-6 w-6 text-red-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Unread</p>
+              <p className="text-sm text-muted-foreground">{t('notifications.unread')}</p>
               <p className="text-2xl font-bold">{unreadCount}</p>
             </div>
           </CardContent>
@@ -146,7 +148,7 @@ export default function NotificationsPage() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Notification Settings
+              {t('notifications.settings')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -179,10 +181,10 @@ export default function NotificationsPage() {
       {/* Notifications List */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg">All Notifications</CardTitle>
+          <CardTitle className="text-lg">{t('notifications.title')}</CardTitle>
           {unreadCount > 0 && (
             <Button size="sm" variant="outline" onClick={handleMarkAllRead} className="gap-1">
-              <CheckCheck className="h-4 w-4" /> Mark All Read
+              <CheckCheck className="h-4 w-4" /> {t('notifications.markAllRead')}
             </Button>
           )}
         </CardHeader>
@@ -192,7 +194,7 @@ export default function NotificationsPage() {
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : notifications.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No notifications.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('notifications.noNotifications')}</p>
           ) : (
             <div className="space-y-2">
               {notifications.map((notif) => (

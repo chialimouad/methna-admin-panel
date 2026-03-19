@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { securityApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,6 +18,7 @@ import { formatDateTime } from '@/lib/utils'
 import { Lock, Plus, Trash2, Loader2, ShieldAlert } from 'lucide-react'
 
 export default function SecurityPage() {
+  const { t } = useTranslation()
   const [blacklist, setBlacklist] = useState<EmailBlacklist[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -83,7 +85,7 @@ export default function SecurityPage() {
               <Lock className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">JWT Expiry</p>
+              <p className="text-sm text-muted-foreground">{t('security.jwtExpiry')}</p>
               <p className="text-xl font-bold">15 min</p>
             </div>
           </CardContent>
@@ -94,7 +96,7 @@ export default function SecurityPage() {
               <ShieldAlert className="h-6 w-6 text-amber-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Rate Limit</p>
+              <p className="text-sm text-muted-foreground">{t('security.rateLimit')}</p>
               <p className="text-xl font-bold">100/min</p>
             </div>
           </CardContent>
@@ -105,7 +107,7 @@ export default function SecurityPage() {
               <ShieldAlert className="h-6 w-6 text-red-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Blacklisted Domains</p>
+              <p className="text-sm text-muted-foreground">{t('security.blacklistedDomains')}</p>
               <p className="text-xl font-bold">{blacklist.length}</p>
             </div>
           </CardContent>
@@ -115,9 +117,9 @@ export default function SecurityPage() {
       {/* Email Blacklist */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg">Email Domain Blacklist</CardTitle>
+          <CardTitle className="text-lg">{t('security.emailBlacklist')}</CardTitle>
           <Button size="sm" onClick={() => setAddDialog(true)} className="gap-1">
-            <Plus className="h-4 w-4" /> Add Domain
+            <Plus className="h-4 w-4" /> {t('security.addDomain')}
           </Button>
         </CardHeader>
         <CardContent>
@@ -127,18 +129,18 @@ export default function SecurityPage() {
             </div>
           ) : blacklist.length === 0 ? (
             <p className="py-8 text-center text-muted-foreground">
-              No blacklisted domains. Users can register with any email provider.
+              {t('security.noBlacklist')}
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
-                    <th className="pb-3 pr-4 font-medium">Domain</th>
-                    <th className="pb-3 pr-4 font-medium">Reason</th>
-                    <th className="pb-3 pr-4 font-medium">Status</th>
-                    <th className="pb-3 pr-4 font-medium">Added</th>
-                    <th className="pb-3 font-medium text-right">Actions</th>
+                    <th className="pb-3 pe-4 font-medium">{t('security.domain')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('security.reason')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('security.status')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('security.added')}</th>
+                    <th className="pb-3 font-medium text-end">{t('security.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -148,7 +150,7 @@ export default function SecurityPage() {
                       <td className="py-3 pr-4 text-muted-foreground">{item.reason}</td>
                       <td className="py-3 pr-4">
                         <Badge variant={item.isActive ? 'destructive' : 'secondary'}>
-                          {item.isActive ? 'Active' : 'Inactive'}
+                          {item.isActive ? t('security.active') : t('security.inactive')}
                         </Badge>
                       </td>
                       <td className="py-3 pr-4 text-muted-foreground whitespace-nowrap">
@@ -177,34 +179,34 @@ export default function SecurityPage() {
       <Dialog open={addDialog} onOpenChange={setAddDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Domain to Blacklist</DialogTitle>
+            <DialogTitle>{t('security.addToBlacklist')}</DialogTitle>
             <DialogDescription>
-              Users with emails from this domain will be blocked from registering.
+              {t('security.addBlacklistDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Domain</label>
+              <label className="text-sm font-medium">{t('security.domain')}</label>
               <Input
-                placeholder="e.g. tempmail.com"
+                placeholder={t('security.domainPlaceholder')}
                 value={newDomain}
                 onChange={(e) => setNewDomain(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Reason</label>
+              <label className="text-sm font-medium">{t('security.reason')}</label>
               <Input
-                placeholder="e.g. Disposable email provider"
+                placeholder={t('security.reasonPlaceholder')}
                 value={newReason}
                 onChange={(e) => setNewReason(e.target.value)}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setAddDialog(false)}>{t('common.cancel')}</Button>
             <Button onClick={handleAdd} disabled={addLoading || !newDomain.trim() || !newReason.trim()}>
-              {addLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Add to Blacklist
+              {addLoading ? <Loader2 className="h-4 w-4 animate-spin me-2" /> : null}
+              {t('security.addDomain')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -214,14 +216,14 @@ export default function SecurityPage() {
       <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove from Blacklist</DialogTitle>
+            <DialogTitle>{t('security.removeFromBlacklist')}</DialogTitle>
             <DialogDescription>
-              Remove <strong className="font-mono">{deleteDialog.domain}</strong> from the blacklist? Users with this domain will be able to register again.
+              <strong className="font-mono">{deleteDialog.domain}</strong> {t('security.removeConfirm')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, domain: '' })}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Remove</Button>
+            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, domain: '' })}>{t('common.cancel')}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{t('common.remove')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +15,7 @@ import {
 import { Loader2, Bell, Send, Users, User, CheckCircle2 } from 'lucide-react'
 
 export default function SendNotificationsPage() {
+  const { t } = useTranslation()
   const [mode, setMode] = useState<'single' | 'broadcast'>('single')
   const [userId, setUserId] = useState('')
   const [title, setTitle] = useState('')
@@ -56,8 +58,8 @@ export default function SendNotificationsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Send Notifications</h1>
-        <p className="text-muted-foreground">Send notifications to individual users or broadcast to all active users</p>
+        <h1 className="text-2xl font-bold">{t('sendNotifications.title')}</h1>
+        <p className="text-muted-foreground">{t('sendNotifications.subtitle')}</p>
       </div>
 
       {/* Mode Selection */}
@@ -71,8 +73,8 @@ export default function SendNotificationsPage() {
               <User className={`h-6 w-6 ${mode === 'single' ? 'text-primary' : 'text-muted-foreground'}`} />
             </div>
             <div>
-              <p className="font-semibold">Single User</p>
-              <p className="text-xs text-muted-foreground">Send to a specific user by ID</p>
+              <p className="font-semibold">{t('sendNotifications.singleUser')}</p>
+              <p className="text-xs text-muted-foreground">{t('sendNotifications.singleUserDesc')}</p>
             </div>
           </CardContent>
         </Card>
@@ -85,8 +87,8 @@ export default function SendNotificationsPage() {
               <Users className={`h-6 w-6 ${mode === 'broadcast' ? 'text-primary' : 'text-muted-foreground'}`} />
             </div>
             <div>
-              <p className="font-semibold">Broadcast</p>
-              <p className="text-xs text-muted-foreground">Send to all active users</p>
+              <p className="font-semibold">{t('sendNotifications.broadcast')}</p>
+              <p className="text-xs text-muted-foreground">{t('sendNotifications.broadcastDesc')}</p>
             </div>
           </CardContent>
         </Card>
@@ -97,17 +99,17 @@ export default function SendNotificationsPage() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            Compose Notification
+            {t('sendNotifications.compose')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {mode === 'single' && (
             <div>
-              <label className="text-sm font-medium">User ID *</label>
+              <label className="text-sm font-medium">{t('sendNotifications.userId')} *</label>
               <Input
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
-                placeholder="Enter the user ID (UUID)"
+                placeholder={t('sendNotifications.userIdPlaceholder')}
                 className="mt-1"
               />
             </div>
@@ -115,50 +117,50 @@ export default function SendNotificationsPage() {
 
           {mode === 'broadcast' && (
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-sm text-amber-800 font-medium">Broadcast Mode</p>
-              <p className="text-xs text-amber-700">This will send the notification to ALL active users. Use with caution.</p>
+              <p className="text-sm text-amber-800 font-medium">{t('sendNotifications.broadcast')}</p>
+              <p className="text-xs text-amber-700">{t('sendNotifications.broadcastWarning')}</p>
             </div>
           )}
 
           <div>
-            <label className="text-sm font-medium">Notification Type</label>
+            <label className="text-sm font-medium">{t('sendNotifications.type')}</label>
             <Select value={type} onValueChange={setType}>
               <SelectTrigger className="mt-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="system">System</SelectItem>
-                <SelectItem value="match">Match</SelectItem>
-                <SelectItem value="message">Message</SelectItem>
-                <SelectItem value="like">Like</SelectItem>
-                <SelectItem value="subscription">Subscription</SelectItem>
+                <SelectItem value="system">{t('sendNotifications.system')}</SelectItem>
+                <SelectItem value="match">{t('sendNotifications.match')}</SelectItem>
+                <SelectItem value="message">{t('sendNotifications.message')}</SelectItem>
+                <SelectItem value="like">{t('sendNotifications.like')}</SelectItem>
+                <SelectItem value="subscription">{t('sendNotifications.subscription')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <label className="text-sm font-medium">Title *</label>
+            <label className="text-sm font-medium">{t('sendNotifications.titleField')} *</label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Notification title"
+              placeholder={t('sendNotifications.titlePlaceholder')}
               className="mt-1"
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Body *</label>
+            <label className="text-sm font-medium">{t('sendNotifications.body')} *</label>
             <textarea
               className="w-full mt-1 rounded-md border px-3 py-2 text-sm min-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-primary"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="Write the notification message..."
+              placeholder={t('sendNotifications.bodyPlaceholder')}
             />
           </div>
 
           {/* Preview */}
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Preview</label>
+            <label className="text-sm font-medium text-muted-foreground">{t('sendNotifications.preview')}</label>
             <div className="mt-1 rounded-lg border bg-white shadow-sm p-4">
               <div className="flex items-start gap-3">
                 <div className="rounded-full bg-primary/10 p-2 mt-0.5">
@@ -194,7 +196,7 @@ export default function SendNotificationsPage() {
             size="lg"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            {mode === 'broadcast' ? 'Broadcast to All Users' : 'Send Notification'}
+            {mode === 'broadcast' ? t('sendNotifications.broadcastToAll') : t('sendNotifications.send')}
           </Button>
         </CardContent>
       </Card>

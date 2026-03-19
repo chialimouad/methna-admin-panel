@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { subscriptionsApi, adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -7,6 +8,7 @@ import { Loader2, Crown, CreditCard, TrendingUp, Star, Zap, Gift } from 'lucide-
 import type { DashboardStats } from '@/types'
 
 export default function MonetizationPage() {
+  const { t } = useTranslation()
   const [plans, setPlans] = useState<any[]>([])
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -55,8 +57,8 @@ export default function MonetizationPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Monetization & Subscriptions</h1>
-        <p className="text-muted-foreground">Manage subscription plans, revenue, and premium features</p>
+        <h1 className="text-2xl font-bold">{t('monetization.title')}</h1>
+        <p className="text-muted-foreground">{t('monetization.subtitle')}</p>
       </div>
 
       {/* Revenue Overview */}
@@ -67,7 +69,7 @@ export default function MonetizationPage() {
               <Crown className="h-6 w-6 text-amber-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Premium Users</p>
+              <p className="text-sm text-muted-foreground">{t('monetization.premiumUsers')}</p>
               <p className="text-2xl font-bold">{stats?.revenue?.premiumUsers ?? 0}</p>
             </div>
           </CardContent>
@@ -78,7 +80,7 @@ export default function MonetizationPage() {
               <TrendingUp className="h-6 w-6 text-emerald-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Conversion Rate</p>
+              <p className="text-sm text-muted-foreground">{t('monetization.conversionRate')}</p>
               <p className="text-2xl font-bold">{stats?.revenue?.conversionRate ?? '0%'}</p>
             </div>
           </CardContent>
@@ -89,7 +91,7 @@ export default function MonetizationPage() {
               <CreditCard className="h-6 w-6 text-blue-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Users</p>
+              <p className="text-sm text-muted-foreground">{t('monetization.totalUsers')}</p>
               <p className="text-2xl font-bold">{stats?.users?.total ?? 0}</p>
             </div>
           </CardContent>
@@ -100,7 +102,7 @@ export default function MonetizationPage() {
               <Zap className="h-6 w-6 text-purple-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Active Users</p>
+              <p className="text-sm text-muted-foreground">{t('monetization.activeUsers')}</p>
               <p className="text-2xl font-bold">{stats?.users?.active ?? 0}</p>
             </div>
           </CardContent>
@@ -109,11 +111,11 @@ export default function MonetizationPage() {
 
       {/* Subscription Plans */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">Subscription Plans</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('monetization.subscriptionPlans')}</h2>
         {plans.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
-              No subscription plans configured yet.
+              {t('monetization.noPlans')}
             </CardContent>
           </Card>
         ) : (
@@ -171,23 +173,23 @@ export default function MonetizationPage() {
       {stats && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Conversion Funnel</CardTitle>
+            <CardTitle className="text-lg">{t('monetization.conversionFunnel')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
               <div className="flex-1 text-center p-4 rounded-lg bg-muted">
                 <p className="text-3xl font-bold">{stats.users.total}</p>
-                <p className="text-xs text-muted-foreground mt-1">Total Users</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('monetization.totalUsers')}</p>
               </div>
               <div className="text-muted-foreground text-2xl">&rarr;</div>
               <div className="flex-1 text-center p-4 rounded-lg bg-muted">
                 <p className="text-3xl font-bold">{stats.users.active}</p>
-                <p className="text-xs text-muted-foreground mt-1">Active Users</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('monetization.activeUsers')}</p>
               </div>
               <div className="text-muted-foreground text-2xl">&rarr;</div>
               <div className="flex-1 text-center p-4 rounded-lg bg-amber-50">
                 <p className="text-3xl font-bold text-amber-600">{stats.revenue.premiumUsers}</p>
-                <p className="text-xs text-muted-foreground mt-1">Premium Users</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('monetization.premiumUsers')}</p>
               </div>
             </div>
           </CardContent>

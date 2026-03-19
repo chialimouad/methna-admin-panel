@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { analyticsApi } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatsCard } from '@/components/stats-card'
@@ -19,6 +20,7 @@ import {
 } from 'recharts'
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation()
   const [dashboard, setDashboard] = useState<any>(null)
   const [matchesData, setMatchesData] = useState<any[]>([])
   const [conversion, setConversion] = useState<any>(null)
@@ -67,26 +69,26 @@ export default function AnalyticsPage() {
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
-          title="Daily Active Users"
+          title={t('dashboard.dau')}
           value={dau?.dau ?? dashboard?.dailyActiveUsers ?? '-'}
           icon={Users}
         />
         <StatsCard
-          title="Conversion Rate"
+          title={t('dashboard.conversionRate')}
           value={conversion?.conversionRate != null ? `${(conversion.conversionRate * 100).toFixed(1)}%` : dashboard?.conversionRate != null ? `${dashboard.conversionRate}%` : '-'}
-          subtitle="Likes to Matches"
+          subtitle={t('analytics.likesToMatches')}
           icon={TrendingUp}
           iconColor="text-blue-500"
         />
         <StatsCard
-          title="Retention Rate"
+          title={t('dashboard.retention')}
           value={retention?.retentionRate != null ? `${(retention.retentionRate * 100).toFixed(1)}%` : '-'}
-          subtitle="7-day cohort"
+          subtitle={t('analytics.sevenDayCohort')}
           icon={Repeat}
           iconColor="text-amber-500"
         />
         <StatsCard
-          title="Matches Today"
+          title={t('analytics.matchesToday')}
           value={dashboard?.matchesToday ?? '-'}
           icon={Heart}
           iconColor="text-pink-500"
@@ -98,7 +100,7 @@ export default function AnalyticsPage() {
         {/* Matches Over Time */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Matches Over Time (30 days)</CardTitle>
+            <CardTitle className="text-lg">{t('dashboard.matchesOverTime')}</CardTitle>
           </CardHeader>
           <CardContent>
             {matchesData.length > 0 ? (
@@ -120,7 +122,7 @@ export default function AnalyticsPage() {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <p className="py-12 text-center text-muted-foreground">No data available yet.</p>
+              <p className="py-12 text-center text-muted-foreground">{t('common.noData')}</p>
             )}
           </CardContent>
         </Card>
@@ -128,7 +130,7 @@ export default function AnalyticsPage() {
         {/* Platform Stats */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Platform Overview</CardTitle>
+            <CardTitle className="text-lg">{t('analytics.platformOverview')}</CardTitle>
           </CardHeader>
           <CardContent>
             {dashboard ? (
@@ -149,7 +151,7 @@ export default function AnalyticsPage() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="py-12 text-center text-muted-foreground">No data available yet.</p>
+              <p className="py-12 text-center text-muted-foreground">{t('common.noData')}</p>
             )}
           </CardContent>
         </Card>
@@ -160,23 +162,23 @@ export default function AnalyticsPage() {
         {conversion && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Like-to-Match Conversion</CardTitle>
+              <CardTitle className="text-lg">{t('analytics.likeToMatchConversion')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-4">
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-2xl font-bold">{conversion.totalLikes ?? '-'}</p>
-                  <p className="text-xs text-muted-foreground">Total Likes</p>
+                  <p className="text-xs text-muted-foreground">{t('dashboard.totalLikes')}</p>
                 </div>
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-2xl font-bold">{conversion.totalMatches ?? '-'}</p>
-                  <p className="text-xs text-muted-foreground">Total Matches</p>
+                  <p className="text-xs text-muted-foreground">{t('dashboard.totalMatches')}</p>
                 </div>
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-2xl font-bold text-primary">
                     {conversion.conversionRate != null ? `${(conversion.conversionRate * 100).toFixed(1)}%` : '-'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Conv. Rate</p>
+                  <p className="text-xs text-muted-foreground">{t('dashboard.conversionRate')}</p>
                 </div>
               </div>
             </CardContent>
@@ -186,23 +188,23 @@ export default function AnalyticsPage() {
         {retention && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">User Retention (7-day Cohort)</CardTitle>
+              <CardTitle className="text-lg">{t('analytics.userRetention')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="grid grid-cols-3 gap-4">
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-2xl font-bold">{retention.cohortSize ?? '-'}</p>
-                  <p className="text-xs text-muted-foreground">Cohort Size</p>
+                  <p className="text-xs text-muted-foreground">{t('analytics.cohortSize')}</p>
                 </div>
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-2xl font-bold">{retention.retainedUsers ?? '-'}</p>
-                  <p className="text-xs text-muted-foreground">Retained</p>
+                  <p className="text-xs text-muted-foreground">{t('analytics.retained')}</p>
                 </div>
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-2xl font-bold text-primary">
                     {retention.retentionRate != null ? `${(retention.retentionRate * 100).toFixed(1)}%` : '-'}
                   </p>
-                  <p className="text-xs text-muted-foreground">Retention</p>
+                  <p className="text-xs text-muted-foreground">{t('dashboard.retention')}</p>
                 </div>
               </div>
             </CardContent>

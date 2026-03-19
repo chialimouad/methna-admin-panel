@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -40,6 +41,7 @@ const statusConfig: Record<string, { label: string; variant: any; icon: any }> =
 }
 
 export default function SupportPage() {
+  const { t } = useTranslation()
   const [tickets, setTickets] = useState<any[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -92,8 +94,8 @@ export default function SupportPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Support & Help Desk</h1>
-        <p className="text-muted-foreground">Manage user support tickets and help requests</p>
+        <h1 className="text-2xl font-bold">{t('support.title')}</h1>
+        <p className="text-muted-foreground">{t('support.subtitle')}</p>
       </div>
 
       {/* Stats */}
@@ -104,7 +106,7 @@ export default function SupportPage() {
               <Headphones className="h-6 w-6 text-blue-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Tickets</p>
+              <p className="text-sm text-muted-foreground">{t('support.totalTickets')}</p>
               <p className="text-2xl font-bold">{total}</p>
             </div>
           </CardContent>
@@ -115,7 +117,7 @@ export default function SupportPage() {
               <Clock className="h-6 w-6 text-red-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Open</p>
+              <p className="text-sm text-muted-foreground">{t('support.open')}</p>
               <p className="text-2xl font-bold">{openCount}</p>
             </div>
           </CardContent>
@@ -126,7 +128,7 @@ export default function SupportPage() {
               <MessageSquare className="h-6 w-6 text-amber-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">In Progress</p>
+              <p className="text-sm text-muted-foreground">{t('support.inProgress')}</p>
               <p className="text-2xl font-bold">{inProgressCount}</p>
             </div>
           </CardContent>
@@ -137,7 +139,7 @@ export default function SupportPage() {
               <CheckCircle2 className="h-6 w-6 text-emerald-500" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Resolved</p>
+              <p className="text-sm text-muted-foreground">{t('reports.resolved')}</p>
               <p className="text-2xl font-bold">{total - openCount - inProgressCount}</p>
             </div>
           </CardContent>
@@ -150,18 +152,18 @@ export default function SupportPage() {
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Tickets</SelectItem>
-          <SelectItem value="open">Open</SelectItem>
-          <SelectItem value="in_progress">In Progress</SelectItem>
-          <SelectItem value="resolved">Resolved</SelectItem>
-          <SelectItem value="closed">Closed</SelectItem>
+          <SelectItem value="all">{t('support.allTickets')}</SelectItem>
+          <SelectItem value="open">{t('support.open')}</SelectItem>
+          <SelectItem value="in_progress">{t('support.inProgress')}</SelectItem>
+          <SelectItem value="resolved">{t('reports.resolved')}</SelectItem>
+          <SelectItem value="closed">{t('support.closed')}</SelectItem>
         </SelectContent>
       </Select>
 
       {/* Tickets List */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Support Tickets</CardTitle>
+          <CardTitle className="text-lg">{t('nav.supportTickets')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -169,7 +171,7 @@ export default function SupportPage() {
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : tickets.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No tickets found.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('support.noTickets')}</p>
           ) : (
             <>
               <div className="space-y-3">
@@ -226,7 +228,7 @@ export default function SupportPage() {
                           }}
                         >
                           <Send className="h-3.5 w-3.5" />
-                          {ticket.adminReply ? 'Update' : 'Reply'}
+                          {ticket.adminReply ? t('support.update') : t('support.reply')}
                         </Button>
                       </div>
                     </div>
@@ -236,7 +238,7 @@ export default function SupportPage() {
 
               {totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between border-t pt-4">
-                  <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+                  <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
                       <ChevronLeft className="h-4 w-4" />
@@ -256,7 +258,7 @@ export default function SupportPage() {
       <Dialog open={replyDialog.open} onOpenChange={(open) => setReplyDialog({ ...replyDialog, open })}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Reply to Ticket</DialogTitle>
+            <DialogTitle>{t('support.replyToTicket')}</DialogTitle>
             <DialogDescription>
               <strong>{replyDialog.ticket?.subject}</strong>
               <br />
@@ -265,7 +267,7 @@ export default function SupportPage() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-xs font-medium">Your Reply</label>
+              <label className="text-xs font-medium">{t('support.yourReply')}</label>
               <textarea
                 className="w-full rounded-md border px-3 py-2 text-sm min-h-[120px] resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                 value={replyText}
@@ -274,24 +276,24 @@ export default function SupportPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-medium">Set Status</label>
+              <label className="text-xs font-medium">{t('users.status')}</label>
               <Select value={replyStatus} onValueChange={setReplyStatus}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
+                  <SelectItem value="in_progress">{t('support.inProgress')}</SelectItem>
+                  <SelectItem value="resolved">{t('reports.resolved')}</SelectItem>
+                  <SelectItem value="closed">{t('support.closed')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setReplyDialog({ open: false, ticket: null })}>Cancel</Button>
+            <Button variant="outline" onClick={() => setReplyDialog({ open: false, ticket: null })}>{t('common.cancel')}</Button>
             <Button onClick={handleReply} disabled={replyLoading || !replyText.trim()} className="gap-1">
               {replyLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Send Reply
+              {t('support.sendReply')}
             </Button>
           </DialogFooter>
         </DialogContent>

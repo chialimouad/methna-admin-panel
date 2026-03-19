@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -55,6 +56,7 @@ const emptyForm = {
 }
 
 export default function AdsPage() {
+  const { t } = useTranslation()
   const [ads, setAds] = useState<Ad[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -146,11 +148,11 @@ export default function AdsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Ad Management</h1>
-          <p className="text-muted-foreground">Create and manage in-app advertisements</p>
+          <h1 className="text-2xl font-bold">{t('ads.title')}</h1>
+          <p className="text-muted-foreground">{t('ads.subtitle')}</p>
         </div>
         <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> Create Ad
+          <Plus className="h-4 w-4" /> {t('ads.createAd')}
         </Button>
       </div>
 
@@ -160,7 +162,7 @@ export default function AdsPage() {
           <CardContent className="flex items-center gap-4 p-6">
             <div className="rounded-lg bg-blue-50 p-3"><Megaphone className="h-6 w-6 text-blue-500" /></div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Ads</p>
+              <p className="text-sm text-muted-foreground">{t('ads.totalAds')}</p>
               <p className="text-2xl font-bold">{ads.length}</p>
             </div>
           </CardContent>
@@ -169,7 +171,7 @@ export default function AdsPage() {
           <CardContent className="flex items-center gap-4 p-6">
             <div className="rounded-lg bg-emerald-50 p-3"><Eye className="h-6 w-6 text-emerald-500" /></div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Impressions</p>
+              <p className="text-sm text-muted-foreground">{t('ads.totalImpressions')}</p>
               <p className="text-2xl font-bold">{totalImpressions.toLocaleString()}</p>
             </div>
           </CardContent>
@@ -178,7 +180,7 @@ export default function AdsPage() {
           <CardContent className="flex items-center gap-4 p-6">
             <div className="rounded-lg bg-purple-50 p-3"><MousePointerClick className="h-6 w-6 text-purple-500" /></div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Clicks</p>
+              <p className="text-sm text-muted-foreground">{t('ads.totalClicks')}</p>
               <p className="text-2xl font-bold">{totalClicks.toLocaleString()}</p>
             </div>
           </CardContent>
@@ -187,7 +189,7 @@ export default function AdsPage() {
           <CardContent className="flex items-center gap-4 p-6">
             <div className="rounded-lg bg-amber-50 p-3"><Image className="h-6 w-6 text-amber-500" /></div>
             <div>
-              <p className="text-sm text-muted-foreground">Avg CTR</p>
+              <p className="text-sm text-muted-foreground">{t('ads.avgCtr')}</p>
               <p className="text-2xl font-bold">{avgCtr}%</p>
             </div>
           </CardContent>
@@ -197,7 +199,7 @@ export default function AdsPage() {
       {/* Ads List */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">All Ads</CardTitle>
+          <CardTitle className="text-lg">{t('ads.allAds')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -205,7 +207,7 @@ export default function AdsPage() {
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : ads.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No ads created yet. Click "Create Ad" to get started.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('ads.noAds')}</p>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {ads.map((ad) => (
@@ -250,7 +252,7 @@ export default function AdsPage() {
 
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" className="flex-1 gap-1" onClick={() => openEdit(ad)}>
-                        <Pencil className="h-3.5 w-3.5" /> Edit
+                        <Pencil className="h-3.5 w-3.5" /> {t('ads.edit')}
                       </Button>
                       <Button size="sm" variant="outline" className="text-red-500 hover:text-red-600" onClick={() => setDeleteDialog({ open: true, ad })}>
                         <Trash2 className="h-3.5 w-3.5" />
@@ -268,8 +270,8 @@ export default function AdsPage() {
       <Dialog open={formDialog} onOpenChange={setFormDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editingAd ? 'Edit Ad' : 'Create New Ad'}</DialogTitle>
-            <DialogDescription>Configure the ad with an image, title, button, and targeting.</DialogDescription>
+            <DialogTitle>{editingAd ? t('ads.editAd') : t('ads.createNew')}</DialogTitle>
+            <DialogDescription>{t('ads.configure')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             <div>
@@ -356,9 +358,9 @@ export default function AdsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setFormDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setFormDialog(false)}>{t('common.cancel')}</Button>
             <Button onClick={handleSave} disabled={formLoading || !form.title}>
-              {formLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : editingAd ? 'Update Ad' : 'Create Ad'}
+              {formLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : editingAd ? t('common.update') : t('ads.createAd')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -368,14 +370,14 @@ export default function AdsPage() {
       <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Ad</DialogTitle>
+            <DialogTitle>{t('ads.deleteAd')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{deleteDialog.ad?.title}"? This action cannot be undone.
+              {t('ads.deleteConfirm')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, ad: null })}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, ad: null })}>{t('common.cancel')}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{t('common.delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

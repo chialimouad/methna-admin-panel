@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { chatApi } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { formatDateTime } from '@/lib/utils'
 import { Loader2, MessageSquare, Eye, ArrowLeft, VolumeX, Volume2 } from 'lucide-react'
 
 export default function ChatPage() {
+  const { t } = useTranslation()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null)
@@ -56,12 +58,12 @@ export default function ChatPage() {
     return (
       <div className="space-y-6">
         <Button variant="ghost" onClick={() => { setSelectedConvo(null); setMessages([]) }} className="gap-2">
-          <ArrowLeft className="h-4 w-4" /> Back to Conversations
+          <ArrowLeft className="h-4 w-4" /> {t('chat.backToConversations')}
         </Button>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Messages</CardTitle>
+            <CardTitle className="text-lg">{t('chat.messages')}</CardTitle>
           </CardHeader>
           <CardContent>
             {messagesLoading ? (
@@ -69,7 +71,7 @@ export default function ChatPage() {
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
             ) : messages.length === 0 ? (
-              <p className="py-8 text-center text-muted-foreground">No messages in this conversation.</p>
+              <p className="py-8 text-center text-muted-foreground">{t('chat.noMessages')}</p>
             ) : (
               <div className="space-y-3 max-h-[600px] overflow-y-auto">
                 {messages.map((msg) => (
@@ -99,15 +101,15 @@ export default function ChatPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Chat Moderation</h1>
-        <p className="text-muted-foreground">Monitor conversations and messages for content moderation</p>
+        <h1 className="text-2xl font-bold">{t('chat.title')}</h1>
+        <p className="text-muted-foreground">{t('chat.subtitle')}</p>
       </div>
 
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
-            Conversations ({conversations.length})
+            {t('chat.conversations')} ({conversations.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -116,17 +118,17 @@ export default function ChatPage() {
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : conversations.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No conversations found.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('chat.noConversations')}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
-                    <th className="pb-3 pr-4 font-medium">Participants</th>
-                    <th className="pb-3 pr-4 font-medium">Last Message</th>
-                    <th className="pb-3 pr-4 font-medium">Status</th>
-                    <th className="pb-3 pr-4 font-medium">Last Activity</th>
-                    <th className="pb-3 font-medium text-right">Actions</th>
+                    <th className="pb-3 pe-4 font-medium">{t('chat.participants')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('chat.lastMessage')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.status')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('chat.lastActivity')}</th>
+                    <th className="pb-3 font-medium text-end">{t('users.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">

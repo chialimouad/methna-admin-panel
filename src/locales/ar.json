@@ -101,7 +101,21 @@
     "viewAnalytics": "عرض التحليلات",
     "recentActivity": "النشاط الأخير",
     "platformHealth": "صحة المنصة",
-    "noData": "لا توجد بيانات متاحة بعد."
+    "noData": "لا توجد بيانات متاحة بعد.",
+    "subtitle": "إليك ما يحدث في منصتك اليوم.",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "totalLikes": "إجمالي الإعجابات",
+    "totalPhotos": "إجمالي الصور",
+    "profiles": "الملفات الشخصية",
+    "userGrowth": "نمو المستخدمين",
+    "dau": "المستخدمون النشطون يومياً",
+    "wau": "المستخدمون النشطون أسبوعياً",
+    "mau": "المستخدمون النشطون شهرياً",
+    "retention": "الاحتفاظ",
+    "revenue": "الإيرادات",
+    "newRegistrations": "التسجيلات الجديدة",
+    "activeRate": "معدل النشاط"
   },
   "users": {
     "title": "إدارة المستخدمين",
@@ -143,6 +157,7 @@
     "edit": "تعديل",
     "activity": "النشاط",
     "photos": "الصور",
+    "verification": "التحقق",
     "verificationTab": "التحقق",
     "profile": "الملف الشخصي",
     "bio": "النبذة",
@@ -171,7 +186,26 @@
     "revokeAllSessions": "إلغاء جميع الجلسات",
     "deleteAccount": "حذف الحساب",
     "noPhotos": "لم يتم رفع صور.",
-    "noActivity": "لا يوجد نشاط حديث."
+    "noActivity": "لا يوجد نشاط حديث.",
+    "backToUsers": "العودة للمستخدمين",
+    "notFound": "المستخدم غير موجود.",
+    "notify": "إشعار",
+    "activate": "تفعيل",
+    "suspend": "تعليق",
+    "ban": "حظر",
+    "shadowBan": "حظر خفي",
+    "unShadowBan": "إلغاء الحظر الخفي",
+    "analyzing": "جاري التحليل...",
+    "suspiciousAnalysis": "تحليل السلوك المشبوه",
+    "editUser": "تعديل المستخدم",
+    "profileInfo": "معلومات الملف الشخصي",
+    "noProfile": "لم يتم إنشاء ملف شخصي بعد.",
+    "accountDetails": "تفاصيل الحساب",
+    "freePlan": "خطة مجانية — لا يوجد اشتراك نشط",
+    "verificationStatus": "حالة التحقق",
+    "trustSafetyScore": "نقاط الثقة والسلامة",
+    "sendNotifTo": "إرسال إشعار إلى",
+    "sendNotifDesc": "سيتم إرسال إشعار فوري لهذا المستخدم."
   },
   "reports": {
     "title": "البلاغات",
@@ -209,7 +243,10 @@
     "approved": "مقبول",
     "rejected": "مرفوض",
     "noPhotos": "لا توجد صور معلقة.",
-    "moderationNote": "ملاحظة المراجعة (اختياري)"
+    "moderationNote": "ملاحظة المراجعة (اختياري)",
+    "pendingModeration": "صور بانتظار المراجعة",
+    "noPending": "لا توجد صور معلقة",
+    "allModerated": "تمت مراجعة جميع الصور."
   },
   "verification": {
     "title": "مركز التحقق",
@@ -221,7 +258,24 @@
     "approve": "قبول",
     "reject": "رفض",
     "note": "ملاحظة (اختياري)",
-    "noItems": "لا توجد عناصر تحقق معلقة."
+    "noItems": "لا توجد عناصر تحقق معلقة.",
+    "selfie": "صورة شخصية",
+    "main": "رئيسية",
+    "pendingReview": "بانتظار المراجعة",
+    "selfieVerifications": "التحقق من الصور الشخصية",
+    "profilePhotos": "صور الملف الشخصي",
+    "allPending": "جميع المعلقة",
+    "approvePhoto": "قبول الصورة",
+    "rejectPhoto": "رفض الصورة",
+    "approveDesc": "سيتم قبول هذه الصورة وستكون مرئية في ملف المستخدم.",
+    "rejectDesc": "سيتم رفض هذه الصورة. سيتم إخطار المستخدم.",
+    "allCaughtUp": "تم الانتهاء من الكل!",
+    "noPending": "لا توجد عناصر معلقة في هذه الفئة.",
+    "moderationFailed": "فشل في مراجعة الصورة",
+    "documents": "الوثائق",
+    "noDocsPending": "لا توجد وثائق تحقق معلقة.",
+    "docApprovedDesc": "تم الموافقة على تحقق المستخدم وتم تعيين الحالة كنشط.",
+    "docRejectedDesc": "تم رفض تحقق المستخدم."
   },
   "analytics": {
     "title": "التحليلات",
@@ -231,6 +285,8 @@
     "likesToMatches": "الإعجابات إلى التوافقات",
     "retentionRate": "معدل الاحتفاظ",
     "cohort7day": "مجموعة 7 أيام",
+    "sevenDayCohort": "مجموعة 7 أيام",
+    "likeToMatchConversion": "تحويل الإعجاب إلى توافق",
     "matchesToday": "توافقات اليوم",
     "matchesOverTime": "التوافقات عبر الزمن (30 يوم)",
     "platformOverview": "نظرة عامة على المنصة",
@@ -275,7 +331,8 @@
     "sendReply": "إرسال الرد",
     "update": "تحديث",
     "reply": "رد",
-    "noTickets": "لم يتم العثور على تذاكر."
+    "noTickets": "لم يتم العثور على تذاكر.",
+    "allTickets": "جميع التذاكر"
   },
   "subscriptions": {
     "title": "الاشتراكات والتعزيزات",
@@ -431,8 +488,29 @@
     "conversionFunnel": "مسار التحويل"
   },
   "activity": {
-    "title": "سجل النشاط",
-    "subtitle": "مراقبة تمريرات المستخدمين والتفاعل"
+    "title": "مراقب النشاط",
+    "subtitle": "شاهد من أعجب، تجاهل، أعجب بشدة، وأثنى على من"
+  },
+  "matches": {
+    "unmatch": "إلغاء التوافق",
+    "unmatchConfirm": "سيتم إزالة التوافق بين هذين المستخدمين. لا يمكن التراجع عن هذا الإجراء."
+  },
+  "searchUsers": {
+    "title": "البحث والاكتشاف",
+    "subtitle": "البحث في ملفات المستخدمين بفلاتر متقدمة",
+    "filters": "الفلاتر",
+    "gender": "الجنس",
+    "male": "ذكر",
+    "female": "أنثى",
+    "minAge": "الحد الأدنى للعمر",
+    "maxAge": "الحد الأقصى للعمر",
+    "city": "المدينة",
+    "country": "الدولة",
+    "ethnicity": "العرق",
+    "religiousLevel": "مستوى التدين",
+    "search": "بحث",
+    "results": "النتائج",
+    "noResults": "لا توجد نتائج. استخدم الفلاتر أعلاه وانقر بحث."
   },
   "auditLogs": {
     "title": "سجلات المراجعة",
@@ -453,7 +531,11 @@
   },
   "notifications": {
     "title": "الإشعارات",
-    "subtitle": "مركز إشعارات المستخدم"
+    "subtitle": "مراقبة وإدارة إشعارات النظام",
+    "unread": "غير مقروء",
+    "settings": "إعدادات الإشعارات",
+    "markAllRead": "تعيين الكل كمقروء",
+    "noNotifications": "لا توجد إشعارات."
   },
   "guide": {
     "title": "دليل الاستخدام",
@@ -531,7 +613,11 @@
     "back": "رجوع",
     "next": "التالي",
     "previous": "السابق",
-    "noData": "لم يتم العثور على بيانات."
+    "noData": "لم يتم العثور على بيانات.",
+    "other": "أخرى",
+    "total": "الإجمالي",
+    "error": "خطأ",
+    "send": "إرسال"
   },
   "login": {
     "title": "تسجيل دخول المدير",

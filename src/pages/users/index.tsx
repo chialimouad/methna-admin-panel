@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,16 +36,17 @@ import {
   UserPlus,
 } from 'lucide-react'
 
-const statusBadge = (status: string) => {
+const statusBadge = (status: string, t: (k: string) => string) => {
   switch (status) {
-    case 'active': return <Badge variant="success">Active</Badge>
-    case 'suspended': return <Badge variant="warning">Suspended</Badge>
-    case 'banned': return <Badge variant="destructive">Banned</Badge>
+    case 'active': return <Badge variant="success">{t('users.active')}</Badge>
+    case 'suspended': return <Badge variant="warning">{t('users.suspended')}</Badge>
+    case 'banned': return <Badge variant="destructive">{t('users.banned')}</Badge>
     default: return <Badge variant="secondary">{status}</Badge>
   }
 }
 
 export default function UsersPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [users, setUsers] = useState<User[]>([])
   const [total, setTotal] = useState(0)
@@ -78,9 +80,12 @@ export default function UsersPage() {
       const status = statusFilter === 'all' ? undefined : statusFilter
       const role = roleFilter === 'all' ? undefined : roleFilter
       const plan = planFilter === 'all' ? undefined : planFilter
-      const { data } = await adminApi.getUsers(page, limit, status, search || undefined, role, plan)
-      setUsers(data.users || data || [])
-      setTotal(data.total || 0)
+      const res = await adminApi.getUsers(page, limit, status, search || undefined, role, plan)
+      const payload = res.data
+      const userList = Array.isArray(payload) ? payload : (payload?.users || [])
+      const userTotal = Array.isArray(payload) ? payload.length : (payload?.total || userList.length)
+      setUsers(userList)
+      setTotal(userTotal)
     } catch (err) {
       console.error('Failed to fetch users:', err)
     } finally {
@@ -140,11 +145,11 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Users</h1>
-          <p className="text-muted-foreground">Manage all user accounts</p>
+          <h1 className="text-2xl font-bold">{t('users.title')}</h1>
+          <p className="text-muted-foreground">{t('users.subtitle')}</p>
         </div>
         <Button onClick={() => setCreateDialog(true)} className="gap-2">
-          <UserPlus className="h-4 w-4" /> Create User
+          <UserPlus className="h-4 w-4" /> {t('users.createUser')}
         </Button>
       </div>
 
@@ -153,7 +158,7 @@ export default function UsersPage() {
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder={t('users.search')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
@@ -165,12 +170,12 @@ export default function UsersPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="suspended">Suspended</SelectItem>
-            <SelectItem value="banned">Banned</SelectItem>
-            <SelectItem value="pending_verification">Pending</SelectItem>
-            <SelectItem value="deactivated">Deactivated</SelectItem>
+            <SelectItem value="all">{t('users.allStatuses')}</SelectItem>
+            <SelectItem value="active">{t('users.active')}</SelectItem>
+            <SelectItem value="suspended">{t('users.suspended')}</SelectItem>
+            <SelectItem value="banned">{t('users.banned')}</SelectItem>
+            <SelectItem value="pending_verification">{t('reports.pending')}</SelectItem>
+            <SelectItem value="deactivated">{t('users.deactivated')}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={roleFilter} onValueChange={(v) => { setRoleFilter(v); setPage(1) }}>
@@ -178,10 +183,10 @@ export default function UsersPage() {
             <SelectValue placeholder="Role" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Roles</SelectItem>
-            <SelectItem value="user">User</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-            <SelectItem value="moderator">Moderator</SelectItem>
+            <SelectItem value="all">{t('users.allRoles')}</SelectItem>
+            <SelectItem value="user">{t('users.user')}</SelectItem>
+            <SelectItem value="admin">{t('users.admin')}</SelectItem>
+            <SelectItem value="moderator">{t('users.moderator')}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={planFilter} onValueChange={(v) => { setPlanFilter(v); setPage(1) }}>
@@ -189,19 +194,19 @@ export default function UsersPage() {
             <SelectValue placeholder="Plan" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Plans</SelectItem>
-            <SelectItem value="free">Free</SelectItem>
-            <SelectItem value="premium">Premium</SelectItem>
-            <SelectItem value="gold">Gold</SelectItem>
+            <SelectItem value="all">{t('users.allPlans')}</SelectItem>
+            <SelectItem value="free">{t('users.free')}</SelectItem>
+            <SelectItem value="premium">{t('users.premium')}</SelectItem>
+            <SelectItem value="gold">{t('users.gold')}</SelectItem>
           </SelectContent>
         </Select>
-        <Button variant="outline" size="sm" onClick={handleSearchSubmit}>Search</Button>
+        <Button variant="outline" size="sm" onClick={handleSearchSubmit}>{t('common.search')}</Button>
       </div>
 
       {/* Table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Users ({total})</CardTitle>
+          <CardTitle className="text-lg">{t('users.title')} ({total})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -213,13 +218,13 @@ export default function UsersPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
-                    <th className="pb-3 pr-4 font-medium">User</th>
-                    <th className="pb-3 pr-4 font-medium">Email</th>
-                    <th className="pb-3 pr-4 font-medium">Role</th>
-                    <th className="pb-3 pr-4 font-medium">Status</th>
-                    <th className="pb-3 pr-4 font-medium">Trust</th>
-                    <th className="pb-3 pr-4 font-medium">Joined</th>
-                    <th className="pb-3 font-medium text-right">Actions</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.name')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.email')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.role')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.status')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('userDetail.trustScore')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('users.joined')}</th>
+                    <th className="pb-3 font-medium text-end">{t('users.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -246,7 +251,7 @@ export default function UsersPage() {
                           {user.role?.toUpperCase()}
                         </Badge>
                       </td>
-                      <td className="py-3 pr-4">{statusBadge(user.status)}</td>
+                      <td className="py-3 pr-4">{statusBadge(user.status, t)}</td>
                       <td className="py-3 pr-4">
                         <span className={user.trustScore < 30 ? 'text-red-600 font-bold' : user.trustScore < 60 ? 'text-amber-600' : 'text-emerald-600'}>
                           {user.trustScore}
@@ -287,7 +292,7 @@ export default function UsersPage() {
               </table>
 
               {filteredUsers.length === 0 && (
-                <p className="py-8 text-center text-muted-foreground">No users found.</p>
+                <p className="py-8 text-center text-muted-foreground">{t('users.noUsers')}</p>
               )}
             </div>
           )}
@@ -296,7 +301,7 @@ export default function UsersPage() {
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between border-t pt-4">
               <p className="text-sm text-muted-foreground">
-                Page {page} of {totalPages} ({total} users)
+                {t('common.page')} {page} {t('common.of')} {totalPages} ({total})
               </p>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
@@ -315,7 +320,7 @@ export default function UsersPage() {
       <Dialog open={statusDialog.open} onOpenChange={(open) => setStatusDialog({ ...statusDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Change User Status</DialogTitle>
+            <DialogTitle>{t('users.status')}</DialogTitle>
             <DialogDescription>
               Set <strong>{statusDialog.user?.firstName} {statusDialog.user?.lastName}</strong> status to <strong>{statusDialog.newStatus}</strong>?
             </DialogDescription>
@@ -325,15 +330,15 @@ export default function UsersPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="suspended">Suspended</SelectItem>
-              <SelectItem value="banned">Banned</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="active">{t('users.active')}</SelectItem>
+              <SelectItem value="suspended">{t('users.suspended')}</SelectItem>
+              <SelectItem value="banned">{t('users.banned')}</SelectItem>
+              <SelectItem value="inactive">{t('users.deactivated')}</SelectItem>
             </SelectContent>
           </Select>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setStatusDialog({ open: false, user: null, newStatus: '' })}>Cancel</Button>
-            <Button onClick={handleStatusChange}>Confirm</Button>
+            <Button variant="outline" onClick={() => setStatusDialog({ open: false, user: null, newStatus: '' })}>{t('common.cancel')}</Button>
+            <Button onClick={handleStatusChange}>{t('common.confirm')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -342,14 +347,14 @@ export default function UsersPage() {
       <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete User Account</DialogTitle>
+            <DialogTitle>{t('users.deleteUser')}</DialogTitle>
             <DialogDescription>
               This will soft-delete <strong>{deleteDialog.user?.firstName} {deleteDialog.user?.lastName}</strong>. This action can be reversed in the database.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, user: null })}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="outline" onClick={() => setDeleteDialog({ open: false, user: null })}>{t('common.cancel')}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{t('common.delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -358,57 +363,57 @@ export default function UsersPage() {
       <Dialog open={createDialog} onOpenChange={setCreateDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Create New User</DialogTitle>
-            <DialogDescription>Fill in the details to create a new user account.</DialogDescription>
+            <DialogTitle>{t('users.createUser')}</DialogTitle>
+            <DialogDescription>{t('users.subtitle')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium">First Name</label>
+                <label className="text-xs font-medium">{t('users.name')}</label>
                 <Input value={createForm.firstName} onChange={(e) => setCreateForm({ ...createForm, firstName: e.target.value })} />
               </div>
               <div>
-                <label className="text-xs font-medium">Last Name</label>
+                <label className="text-xs font-medium">{t('users.name')}</label>
                 <Input value={createForm.lastName} onChange={(e) => setCreateForm({ ...createForm, lastName: e.target.value })} />
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium">Email</label>
+              <label className="text-xs font-medium">{t('users.email')}</label>
               <Input type="email" value={createForm.email} onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })} />
             </div>
             <div>
-              <label className="text-xs font-medium">Password</label>
+              <label className="text-xs font-medium">{t('login.password')}</label>
               <Input type="password" value={createForm.password} onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium">Role</label>
+                <label className="text-xs font-medium">{t('users.role')}</label>
                 <Select value={createForm.role} onValueChange={(v) => setCreateForm({ ...createForm, role: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
+                    <SelectItem value="user">{t('users.user')}</SelectItem>
+                    <SelectItem value="admin">{t('users.admin')}</SelectItem>
+                    <SelectItem value="moderator">{t('users.moderator')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <label className="text-xs font-medium">Status</label>
+                <label className="text-xs font-medium">{t('users.status')}</label>
                 <Select value={createForm.status} onValueChange={(v) => setCreateForm({ ...createForm, status: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
-                    <SelectItem value="pending_verification">Pending</SelectItem>
+                    <SelectItem value="active">{t('users.active')}</SelectItem>
+                    <SelectItem value="suspended">{t('users.suspended')}</SelectItem>
+                    <SelectItem value="pending_verification">{t('reports.pending')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setCreateDialog(false)}>{t('common.cancel')}</Button>
             <Button onClick={handleCreateUser} disabled={createLoading || !createForm.email || !createForm.password || !createForm.firstName || !createForm.lastName}>
-              {createLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create User'}
+              {createLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('users.createUser')}
             </Button>
           </DialogFooter>
         </DialogContent>

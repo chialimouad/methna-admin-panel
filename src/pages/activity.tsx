@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -33,6 +34,7 @@ const typeConfig: Record<string, { label: string; color: string; icon: any }> = 
 }
 
 export default function ActivityPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [swipes, setSwipes] = useState<any[]>([])
   const [total, setTotal] = useState(0)
@@ -62,8 +64,8 @@ export default function ActivityPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Activity Monitor</h1>
-        <p className="text-muted-foreground">See who liked, disliked, super-liked, and complimented who</p>
+        <h1 className="text-2xl font-bold">{t('activity.title')}</h1>
+        <p className="text-muted-foreground">{t('activity.subtitle')}</p>
       </div>
 
       {/* Quick Stats */}
@@ -93,20 +95,20 @@ export default function ActivityPage() {
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Activity</SelectItem>
-            <SelectItem value="like">Likes Only</SelectItem>
-            <SelectItem value="super_like">Super Likes Only</SelectItem>
-            <SelectItem value="compliment">Compliments Only</SelectItem>
-            <SelectItem value="pass">Passes Only</SelectItem>
+            <SelectItem value="all">{t('common.all')}</SelectItem>
+            <SelectItem value="like">Likes</SelectItem>
+            <SelectItem value="super_like">Super Likes</SelectItem>
+            <SelectItem value="compliment">Compliments</SelectItem>
+            <SelectItem value="pass">Passes</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-sm text-muted-foreground">{total} total</span>
+        <span className="text-sm text-muted-foreground">{total} {t('common.total')}</span>
       </div>
 
       {/* Activity List */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Swipe Activity</CardTitle>
+          <CardTitle className="text-lg">{t('activity.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -114,7 +116,7 @@ export default function ActivityPage() {
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : swipes.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No activity found.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('common.noData')}</p>
           ) : (
             <>
               <div className="space-y-2">
@@ -181,7 +183,7 @@ export default function ActivityPage() {
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between border-t pt-4">
-                  <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+                  <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
                       <ChevronLeft className="h-4 w-4" />

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { matchesApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -18,6 +19,7 @@ import { formatDateTime } from '@/lib/utils'
 import { Loader2, Heart, Unlink, Eye, Sparkles } from 'lucide-react'
 
 export default function MatchesPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
@@ -72,8 +74,8 @@ export default function MatchesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Matches Overview</h1>
-        <p className="text-muted-foreground">View and manage all user matches and discovery categories</p>
+        <h1 className="text-2xl font-bold">{t('nav.matches')}</h1>
+        <p className="text-muted-foreground">{t('matching.subtitle')}</p>
       </div>
 
       {/* Discovery Stats */}
@@ -104,12 +106,12 @@ export default function MatchesPage() {
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
             <Heart className="h-5 w-5 text-pink-500" />
-            All Matches ({matches.length})
+            {t('nav.matches')} ({matches.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {matches.length === 0 ? (
-            <p className="py-8 text-center text-muted-foreground">No matches found.</p>
+            <p className="py-8 text-center text-muted-foreground">{t('common.noData')}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -187,14 +189,14 @@ export default function MatchesPage() {
       <Dialog open={unmatchDialog.open} onOpenChange={(open) => setUnmatchDialog({ ...unmatchDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Unmatch Users</DialogTitle>
+            <DialogTitle>{t('matches.unmatch')}</DialogTitle>
             <DialogDescription>
-              This will remove the match between these two users. This action cannot be undone.
+              {t('matches.unmatchConfirm')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setUnmatchDialog({ open: false, match: null })}>Cancel</Button>
-            <Button variant="destructive" onClick={handleUnmatch}>Unmatch</Button>
+            <Button variant="outline" onClick={() => setUnmatchDialog({ open: false, match: null })}>{t('common.cancel')}</Button>
+            <Button variant="destructive" onClick={handleUnmatch}>{t('matches.unmatch')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

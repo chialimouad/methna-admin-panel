@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { adminApi, trustSafetyApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -68,6 +69,7 @@ import {
 } from 'lucide-react'
 
 export default function UserDetailPage() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -225,7 +227,7 @@ export default function UserDetailPage() {
   }
 
   if (!detail) {
-    return <div className="text-center text-muted-foreground">User not found.</div>
+    return <div className="text-center text-muted-foreground">{t('userDetail.notFound')}</div>
   }
 
   const { user, profile, photos, subscription } = detail
@@ -234,7 +236,7 @@ export default function UserDetailPage() {
     <div className="space-y-6">
       {/* Back */}
       <Button variant="ghost" onClick={() => navigate('/users')} className="gap-2">
-        <ArrowLeft className="h-4 w-4" /> Back to Users
+        <ArrowLeft className="h-4 w-4" /> {t('userDetail.backToUsers')}
       </Button>
 
       {/* User Header Card */}
@@ -265,13 +267,13 @@ export default function UserDetailPage() {
             </div>
             <div className="flex flex-wrap gap-2 shrink-0">
               <Button size="sm" variant="outline" onClick={() => setNotifDialog(true)} className="gap-1.5">
-                <Send className="h-3.5 w-3.5" /> Notify
+                <Send className="h-3.5 w-3.5" /> {t('userDetail.notify')}
               </Button>
               <Button size="sm" variant="outline" onClick={() => { setEditing(true); setActiveTab('edit') }} className="gap-1.5">
-                <Edit className="h-3.5 w-3.5" /> Edit
+                <Edit className="h-3.5 w-3.5" /> {t('common.edit')}
               </Button>
               <Button size="sm" variant="destructive" onClick={handleDeleteUser} disabled={actionLoading === 'delete'} className="gap-1.5">
-                <Trash2 className="h-3.5 w-3.5" /> Delete
+                <Trash2 className="h-3.5 w-3.5" /> {t('common.delete')}
               </Button>
             </div>
           </div>
@@ -280,32 +282,32 @@ export default function UserDetailPage() {
           <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
             {user.status !== 'active' && (
               <Button size="sm" variant="outline" onClick={() => handleStatusChange('active')} disabled={!!actionLoading} className="gap-1.5">
-                <UserCheck className="h-3.5 w-3.5" /> {actionLoading === 'active' ? '...' : 'Activate'}
+                <UserCheck className="h-3.5 w-3.5" /> {actionLoading === 'active' ? '...' : t('userDetail.activate')}
               </Button>
             )}
             {user.status !== 'suspended' && (
               <Button size="sm" variant="outline" onClick={() => handleStatusChange('suspended')} disabled={!!actionLoading} className="gap-1.5 text-amber-600 border-amber-200 hover:bg-amber-50">
-                <AlertTriangle className="h-3.5 w-3.5" /> {actionLoading === 'suspended' ? '...' : 'Suspend'}
+                <AlertTriangle className="h-3.5 w-3.5" /> {actionLoading === 'suspended' ? '...' : t('userDetail.suspend')}
               </Button>
             )}
             {user.status !== 'banned' && (
               <Button size="sm" variant="outline" onClick={() => handleStatusChange('banned')} disabled={!!actionLoading} className="gap-1.5 text-red-600 border-red-200 hover:bg-red-50">
-                <Ban className="h-3.5 w-3.5" /> {actionLoading === 'banned' ? '...' : 'Ban'}
+                <Ban className="h-3.5 w-3.5" /> {actionLoading === 'banned' ? '...' : t('userDetail.ban')}
               </Button>
             )}
             <Button size="sm" variant="outline" onClick={handleShadowBan} disabled={!!actionLoading} className="gap-1.5">
               {user.isShadowBanned ? <Shield className="h-3.5 w-3.5" /> : <ShieldOff className="h-3.5 w-3.5" />}
-              {actionLoading === 'shadowban' ? '...' : user.isShadowBanned ? 'Un-Shadow Ban' : 'Shadow Ban'}
+              {actionLoading === 'shadowban' ? '...' : user.isShadowBanned ? t('userDetail.unShadowBan') : t('userDetail.shadowBan')}
             </Button>
             <Button size="sm" variant="outline" onClick={handleDetectSuspicious} disabled={detectLoading} className="gap-1.5">
-              <Fingerprint className="h-3.5 w-3.5" /> {detectLoading ? 'Analyzing...' : 'Detect Suspicious'}
+              <Fingerprint className="h-3.5 w-3.5" /> {detectLoading ? t('userDetail.analyzing') : t('userDetail.detectSuspicious')}
             </Button>
           </div>
 
           {/* Suspicious results */}
           {suspicious && (
             <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-sm font-semibold text-amber-800 mb-1">Suspicious Behavior Analysis</p>
+              <p className="text-sm font-semibold text-amber-800 mb-1">{t('userDetail.suspiciousAnalysis')}</p>
               <pre className="text-xs text-amber-700 whitespace-pre-wrap">{JSON.stringify(suspicious, null, 2)}</pre>
             </div>
           )}
@@ -315,11 +317,11 @@ export default function UserDetailPage() {
       {/* Tabbed Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start overflow-x-auto">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="edit">Edit User</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
-          <TabsTrigger value="photos">Photos ({photos?.length || 0})</TabsTrigger>
-          <TabsTrigger value="verification">Verification</TabsTrigger>
+          <TabsTrigger value="overview">{t('userDetail.overview')}</TabsTrigger>
+          <TabsTrigger value="edit">{t('userDetail.editUser')}</TabsTrigger>
+          <TabsTrigger value="activity">{t('userDetail.activity')}</TabsTrigger>
+          <TabsTrigger value="photos">{t('userDetail.photos')} ({photos?.length || 0})</TabsTrigger>
+          <TabsTrigger value="verification">{t('userDetail.verification')}</TabsTrigger>
         </TabsList>
 
         {/* OVERVIEW TAB */}
@@ -328,7 +330,7 @@ export default function UserDetailPage() {
             {/* Profile Details */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Profile Information</CardTitle>
+                <CardTitle className="text-base">{t('userDetail.profileInfo')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {profile ? (
@@ -372,7 +374,7 @@ export default function UserDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No profile created yet.</p>
+                  <p className="text-sm text-muted-foreground">{t('userDetail.noProfile')}</p>
                 )}
               </CardContent>
             </Card>
@@ -381,7 +383,7 @@ export default function UserDetailPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Account Details</CardTitle>
+                  <CardTitle className="text-base">{t('userDetail.accountDetails')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center gap-3">
@@ -433,7 +435,7 @@ export default function UserDetailPage() {
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <Crown className="h-4 w-4 text-amber-500" /> Subscription
+                    <Crown className="h-4 w-4 text-amber-500" /> {t('userDetail.subscription')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -449,7 +451,7 @@ export default function UserDetailPage() {
                       {subscription.endDate && <p className="text-xs text-muted-foreground">Expires: {formatDate(subscription.endDate)}</p>}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Free plan — No active subscription</p>
+                    <p className="text-sm text-muted-foreground">{t('userDetail.freePlan')}</p>
                   )}
                 </CardContent>
               </Card>
@@ -461,7 +463,7 @@ export default function UserDetailPage() {
         <TabsContent value="edit">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Edit User Details</CardTitle>
+              <CardTitle className="text-base">{t('userDetail.editUser')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
@@ -513,9 +515,9 @@ export default function UserDetailPage() {
               <div className="mt-6 flex gap-2">
                 <Button onClick={handleSaveEdit} disabled={editLoading} className="gap-2">
                   {editLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                  Save Changes
+                  {t('common.save')}
                 </Button>
-                <Button variant="outline" onClick={() => setActiveTab('overview')}>Cancel</Button>
+                <Button variant="outline" onClick={() => setActiveTab('overview')}>{t('common.cancel')}</Button>
               </div>
             </CardContent>
           </Card>
@@ -632,7 +634,7 @@ export default function UserDetailPage() {
           ) : (
             <div className="text-center py-16 text-muted-foreground">
               <Camera className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>No photos uploaded</p>
+              <p>{t('userDetail.noPhotos')}</p>
             </div>
           )}
         </TabsContent>
@@ -642,7 +644,7 @@ export default function UserDetailPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Verification Status</CardTitle>
+                <CardTitle className="text-base">{t('userDetail.verificationStatus')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -678,7 +680,7 @@ export default function UserDetailPage() {
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Trust & Safety Score</CardTitle>
+                <CardTitle className="text-base">{t('userDetail.trustSafetyScore')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center">
@@ -713,8 +715,8 @@ export default function UserDetailPage() {
       <Dialog open={notifDialog} onOpenChange={setNotifDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Send Notification to {user.firstName}</DialogTitle>
-            <DialogDescription>This will send a push notification to this user.</DialogDescription>
+            <DialogTitle>{t('userDetail.sendNotifTo')} {user.firstName}</DialogTitle>
+            <DialogDescription>{t('userDetail.sendNotifDesc')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -727,10 +729,10 @@ export default function UserDetailPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setNotifDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setNotifDialog(false)}>{t('common.cancel')}</Button>
             <Button onClick={handleSendNotification} disabled={notifLoading || !notifForm.title || !notifForm.body}>
-              {notifLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
-              Send
+              {notifLoading ? <Loader2 className="h-4 w-4 animate-spin me-1" /> : <Send className="h-4 w-4 me-1" />}
+              {t('common.send')}
             </Button>
           </DialogFooter>
         </DialogContent>

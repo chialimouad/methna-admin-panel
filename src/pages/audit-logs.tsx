@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -112,6 +113,7 @@ function generateMockAuditLogs(): AuditLog[] {
 }
 
 export default function AuditLogsPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [logs, setLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
@@ -167,11 +169,11 @@ export default function AuditLogsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Audit Logs</h1>
-          <p className="text-muted-foreground">Track all administrative actions and changes</p>
+          <h1 className="text-2xl font-bold">{t('auditLogs.title')}</h1>
+          <p className="text-muted-foreground">{t('auditLogs.subtitle')}</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => { setPage(1); setLoading(true); setTimeout(() => setLoading(false), 500) }}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+          <RefreshCw className="h-4 w-4 me-2" /> {t('common.refresh')}
         </Button>
       </div>
 
@@ -184,7 +186,7 @@ export default function AuditLogsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{logs.length}</p>
-              <p className="text-xs text-muted-foreground">Total Entries</p>
+              <p className="text-xs text-muted-foreground">{t('auditLogs.totalActions')}</p>
             </div>
           </CardContent>
         </Card>
@@ -195,7 +197,7 @@ export default function AuditLogsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{todayLogs.length}</p>
-              <p className="text-xs text-muted-foreground">Today's Actions</p>
+              <p className="text-xs text-muted-foreground">{t('auditLogs.todayActions')}</p>
             </div>
           </CardContent>
         </Card>
@@ -206,7 +208,7 @@ export default function AuditLogsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{new Set(logs.map(l => l.adminId)).size}</p>
-              <p className="text-xs text-muted-foreground">Active Admins</p>
+              <p className="text-xs text-muted-foreground">{t('auditLogs.activeAdmins')}</p>
             </div>
           </CardContent>
         </Card>
@@ -217,7 +219,7 @@ export default function AuditLogsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{logs.filter(l => l.action === 'user_delete' || l.action === 'shadow_ban').length}</p>
-              <p className="text-xs text-muted-foreground">Critical Actions</p>
+              <p className="text-xs text-muted-foreground">{t('auditLogs.criticalEvents')}</p>
             </div>
           </CardContent>
         </Card>
@@ -228,7 +230,7 @@ export default function AuditLogsPage() {
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search logs..."
+            placeholder={t('auditLogs.search')}
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1) }}
             className="pl-9"
@@ -240,7 +242,7 @@ export default function AuditLogsPage() {
             <SelectValue placeholder="Action Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Actions</SelectItem>
+            <SelectItem value="all">{t('auditLogs.allActions')}</SelectItem>
             <SelectItem value="user_status_change">Status Changes</SelectItem>
             <SelectItem value="user_create">User Creation</SelectItem>
             <SelectItem value="user_update">User Updates</SelectItem>
@@ -264,7 +266,7 @@ export default function AuditLogsPage() {
           ) : paged.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
               <ScrollText className="h-12 w-12 mb-3 opacity-30" />
-              <p>No audit logs found.</p>
+              <p>{t('auditLogs.noLogs')}</p>
             </div>
           ) : (
             <div className="divide-y">

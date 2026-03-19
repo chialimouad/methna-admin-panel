@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { adminApi, trustSafetyApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -51,7 +52,19 @@ interface PendingPhoto {
   user?: { id: string; firstName: string; lastName: string; email: string; selfieVerified: boolean }
 }
 
+interface PendingVerificationUser {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  selfieUrl: string
+  selfieVerified: boolean
+  status: string
+  createdAt: string
+}
+
 export default function VerificationPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { toast } = useToast()
   const [tab, setTab] = useState('selfies')
@@ -72,6 +85,12 @@ export default function VerificationPage() {
   // Stats
   const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0 })
 
+  // Document verification users
+  const [docUsers, setDocUsers] = useState<PendingVerificationUser[]>([])
+  const [docLoading, setDocLoading] = useState(false)
+  const [docActionLoading, setDocActionLoading] = useState('')
+  const [previewImg, setPreviewImg] = useState<string | null>(null)
+
   const fetchPhotos = async () => {
     setLoading(true)
     try {
@@ -87,10 +106,48 @@ export default function VerificationPage() {
     }
   }
 
+  const fetchDocUsers = async () => {
+    setDocLoading(true)
+    try {
+      const { data } = await adminApi.getUsers(1, 100, 'pending_verification')
+      const users = (data.users || data || []).filter(
+        (u: any) => u.selfieUrl && !u.selfieVerified
+      )
+      setDocUsers(users)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setDocLoading(false)
+    }
+  }
+
   useEffect(() => { fetchPhotos() }, [page])
+  useEffect(() => { fetchDocUsers() }, [])
 
   const selfiePhotos = photos.filter((p) => p.isSelfieVerification)
   const profilePhotos = photos.filter((p) => !p.isSelfieVerification)
+
+  const handleDocAction = async (userId: string, approved: boolean) => {
+    setDocActionLoading(userId)
+    try {
+      await adminApi.updateUser(userId, {
+        selfieVerified: approved,
+        status: approved ? 'active' : 'pending_verification',
+      })
+      toast({
+        title: approved ? t('verification.approved') : t('verification.rejected'),
+        description: approved
+          ? t('verification.docApprovedDesc')
+          : t('verification.docRejectedDesc'),
+        variant: approved ? 'success' : 'warning',
+      })
+      fetchDocUsers()
+    } catch (err) {
+      toast({ title: t('common.error'), description: t('verification.moderationFailed'), variant: 'error' })
+    } finally {
+      setDocActionLoading('')
+    }
+  }
 
   const handleModerate = async () => {
     if (!actionDialog.photo) return
@@ -102,14 +159,14 @@ export default function VerificationPage() {
         actionDialog.note || undefined
       )
       toast({
-        title: actionDialog.action === 'approved' ? 'Photo Approved' : 'Photo Rejected',
-        description: `Photo for ${actionDialog.photo.user?.firstName || 'user'} has been ${actionDialog.action}.`,
+        title: actionDialog.action === 'approved' ? t('verification.approved') : t('verification.rejected'),
+        description: `${actionDialog.photo.user?.firstName || 'user'} - ${actionDialog.action}`,
         variant: actionDialog.action === 'approved' ? 'success' : 'warning',
       })
       setActionDialog({ open: false, photo: null, action: '', note: '' })
       fetchPhotos()
     } catch (err) {
-      toast({ title: 'Error', description: 'Failed to moderate photo', variant: 'error' })
+      toast({ title: t('common.error'), description: t('verification.moderationFailed'), variant: 'error' })
     } finally {
       setActionLoading(false)
     }
@@ -122,8 +179,8 @@ export default function VerificationPage() {
       return (
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
           <CheckCircle2 className="h-12 w-12 mb-3 text-emerald-400" />
-          <p className="text-lg font-medium">All caught up!</p>
-          <p className="text-sm">No pending items in this category.</p>
+          <p className="text-lg font-medium">{t('verification.allCaughtUp')}</p>
+          <p className="text-sm">{t('verification.noPending')}</p>
         </div>
       )
     }
@@ -150,7 +207,7 @@ export default function VerificationPage() {
                       note: '',
                     })}
                   >
-                    <CheckCircle2 className="h-4 w-4 mr-1" /> Approve
+                    <CheckCircle2 className="h-4 w-4 me-1" /> {t('photos.approve')}
                   </Button>
                   <Button
                     size="sm"
@@ -162,22 +219,22 @@ export default function VerificationPage() {
                       note: '',
                     })}
                   >
-                    <XCircle className="h-4 w-4 mr-1" /> Reject
+                    <XCircle className="h-4 w-4 me-1" /> {t('photos.reject')}
                   </Button>
                 </div>
               </div>
               {/* Badges */}
               <div className="absolute top-2 left-2 flex gap-1">
                 {photo.isSelfieVerification && (
-                  <Badge className="bg-blue-500 text-white text-[10px]">Selfie</Badge>
+                  <Badge className="bg-blue-500 text-white text-[10px]">{t('verification.selfie')}</Badge>
                 )}
                 {photo.isMain && (
-                  <Badge className="bg-primary text-white text-[10px]">Main</Badge>
+                  <Badge className="bg-primary text-white text-[10px]">{t('verification.main')}</Badge>
                 )}
               </div>
               <div className="absolute top-2 right-2">
                 <Badge variant="warning" className="text-[10px]">
-                  <Clock className="h-3 w-3 mr-1" /> Pending
+                  <Clock className="h-3 w-3 me-1" /> {t('reports.pending')}
                 </Badge>
               </div>
             </div>
@@ -216,8 +273,8 @@ export default function VerificationPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">Verification Center</h1>
-        <p className="text-muted-foreground">Review selfie verifications, ID documents, and photo moderation</p>
+        <h1 className="text-2xl font-bold">{t('verification.title')}</h1>
+        <p className="text-muted-foreground">{t('verification.subtitle')}</p>
       </div>
 
       {/* Stats */}
@@ -229,7 +286,7 @@ export default function VerificationPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{total}</p>
-              <p className="text-xs text-muted-foreground">Pending Review</p>
+              <p className="text-xs text-muted-foreground">{t('verification.pendingReview')}</p>
             </div>
           </CardContent>
         </Card>
@@ -240,7 +297,7 @@ export default function VerificationPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{selfiePhotos.length}</p>
-              <p className="text-xs text-muted-foreground">Selfie Verifications</p>
+              <p className="text-xs text-muted-foreground">{t('verification.selfieVerifications')}</p>
             </div>
           </CardContent>
         </Card>
@@ -251,7 +308,7 @@ export default function VerificationPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{profilePhotos.length}</p>
-              <p className="text-xs text-muted-foreground">Profile Photos</p>
+              <p className="text-xs text-muted-foreground">{t('verification.profilePhotos')}</p>
             </div>
           </CardContent>
         </Card>
@@ -260,25 +317,134 @@ export default function VerificationPage() {
       {/* Tabs */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
+          <TabsTrigger value="documents" className="gap-1.5">
+            <CreditCard className="h-4 w-4" /> {t('verification.documents')}
+            {docUsers.length > 0 && (
+              <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-[10px]">{docUsers.length}</Badge>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="selfies" className="gap-1.5">
-            <Camera className="h-4 w-4" /> Selfie Verification
+            <Camera className="h-4 w-4" /> {t('verification.selfieVerifications')}
             {selfiePhotos.length > 0 && (
               <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-[10px]">{selfiePhotos.length}</Badge>
             )}
           </TabsTrigger>
           <TabsTrigger value="photos" className="gap-1.5">
-            <FileCheck className="h-4 w-4" /> Profile Photos
+            <FileCheck className="h-4 w-4" /> {t('verification.profilePhotos')}
             {profilePhotos.length > 0 && (
               <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-[10px]">{profilePhotos.length}</Badge>
             )}
           </TabsTrigger>
           <TabsTrigger value="all" className="gap-1.5">
-            All Pending
+            {t('verification.allPending')}
             {total > 0 && (
               <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-[10px]">{total}</Badge>
             )}
           </TabsTrigger>
         </TabsList>
+
+        {/* Documents Tab - Selfie & ID Verification */}
+        <TabsContent value="documents">
+          {docLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : docUsers.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <CheckCircle2 className="h-12 w-12 mb-3 text-emerald-400" />
+              <p className="text-lg font-medium">{t('verification.allCaughtUp')}</p>
+              <p className="text-sm">{t('verification.noDocsPending')}</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              {docUsers.map((u) => (
+                <Card key={u.id} className="overflow-hidden">
+                  <CardContent className="p-0">
+                    {/* Selfie image - clickable for full view */}
+                    <div
+                      className="relative aspect-[4/3] cursor-pointer group"
+                      onClick={() => setPreviewImg(u.selfieUrl)}
+                    >
+                      <img
+                        src={u.selfieUrl}
+                        alt={`${u.firstName} ${u.lastName} selfie`}
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
+                        <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-80 transition-opacity" />
+                      </div>
+                      <div className="absolute top-2 left-2">
+                        <Badge variant="warning" className="text-[10px] gap-1">
+                          <Clock className="h-3 w-3" /> {t('verification.pendingReview')}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* User info + actions */}
+                    <div className="p-4 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {u.firstName?.[0]}{u.lastName?.[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold truncate">{u.firstName} {u.lastName}</p>
+                          <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 shrink-0"
+                          onClick={() => navigate(`/users/${u.id}`)}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Shield className="h-3.5 w-3.5" />
+                        <span>{t('verification.selfie')}</span>
+                        <span className="mx-1">&middot;</span>
+                        <span>{new Date(u.createdAt).toLocaleDateString()}</span>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5"
+                          disabled={docActionLoading === u.id}
+                          onClick={() => handleDocAction(u.id, true)}
+                        >
+                          {docActionLoading === u.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                          )}
+                          {t('verification.approve')}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="flex-1 gap-1.5"
+                          disabled={docActionLoading === u.id}
+                          onClick={() => handleDocAction(u.id, false)}
+                        >
+                          {docActionLoading === u.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <XCircle className="h-3.5 w-3.5" />
+                          )}
+                          {t('verification.reject')}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
 
         {loading ? (
           <div className="flex h-64 items-center justify-center">
@@ -296,7 +462,7 @@ export default function VerificationPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t pt-4">
-          <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+          <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
               <ChevronLeft className="h-4 w-4" />
@@ -308,17 +474,29 @@ export default function VerificationPage() {
         </div>
       )}
 
+      {/* Image Preview Dialog */}
+      <Dialog open={!!previewImg} onOpenChange={() => setPreviewImg(null)}>
+        <DialogContent className="max-w-2xl p-2">
+          <DialogHeader className="sr-only">
+            <DialogTitle>{t('verification.selfie')}</DialogTitle>
+          </DialogHeader>
+          {previewImg && (
+            <img src={previewImg} alt="Document preview" className="w-full rounded-lg object-contain max-h-[80vh]" />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Action Dialog */}
       <Dialog open={actionDialog.open} onOpenChange={(open) => setActionDialog({ ...actionDialog, open })}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionDialog.action === 'approved' ? 'Approve Photo' : 'Reject Photo'}
+              {actionDialog.action === 'approved' ? t('verification.approvePhoto') : t('verification.rejectPhoto')}
             </DialogTitle>
             <DialogDescription>
               {actionDialog.action === 'approved'
-                ? 'This photo will be approved and visible on the user\'s profile.'
-                : 'This photo will be rejected. The user will be notified.'}
+                ? t('verification.approveDesc')
+                : t('verification.rejectDesc')}
             </DialogDescription>
           </DialogHeader>
 
@@ -329,15 +507,15 @@ export default function VerificationPage() {
                 <p className="text-sm font-medium">{actionDialog.photo.user?.firstName} {actionDialog.photo.user?.lastName}</p>
                 <p className="text-xs text-muted-foreground">{actionDialog.photo.user?.email}</p>
                 <div className="mt-1 flex gap-1">
-                  {actionDialog.photo.isSelfieVerification && <Badge variant="info" className="text-[10px]">Selfie</Badge>}
-                  {actionDialog.photo.isMain && <Badge className="text-[10px]">Main Photo</Badge>}
+                  {actionDialog.photo.isSelfieVerification && <Badge variant="info" className="text-[10px]">{t('verification.selfie')}</Badge>}
+                  {actionDialog.photo.isMain && <Badge className="text-[10px]">{t('verification.main')}</Badge>}
                 </div>
               </div>
             </div>
           )}
 
           <div>
-            <label className="text-sm font-medium">Moderator Note (optional)</label>
+            <label className="text-sm font-medium">{t('reports.moderatorNote')}</label>
             <Textarea
               placeholder="Add a note about this decision..."
               value={actionDialog.note}
@@ -348,7 +526,7 @@ export default function VerificationPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setActionDialog({ open: false, photo: null, action: '', note: '' })}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleModerate}
@@ -357,7 +535,7 @@ export default function VerificationPage() {
               variant={actionDialog.action === 'rejected' ? 'destructive' : 'default'}
             >
               {actionLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-              {actionDialog.action === 'approved' ? 'Approve' : 'Reject'}
+              {actionDialog.action === 'approved' ? t('photos.approve') : t('photos.reject')}
             </Button>
           </DialogFooter>
         </DialogContent>

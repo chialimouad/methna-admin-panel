@@ -101,7 +101,21 @@
     "viewAnalytics": "View Analytics",
     "recentActivity": "Recent Activity",
     "platformHealth": "Platform Health",
-    "noData": "No data available yet."
+    "noData": "No data available yet.",
+    "subtitle": "Here's what's happening with your platform today.",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "totalLikes": "Total Likes",
+    "totalPhotos": "Total Photos",
+    "profiles": "Profiles",
+    "userGrowth": "User Growth",
+    "dau": "Daily Active Users",
+    "wau": "Weekly Active Users",
+    "mau": "Monthly Active Users",
+    "retention": "Retention",
+    "revenue": "Revenue",
+    "newRegistrations": "New Registrations",
+    "activeRate": "Active Rate"
   },
   "users": {
     "title": "User Management",
@@ -143,6 +157,7 @@
     "edit": "Edit",
     "activity": "Activity",
     "photos": "Photos",
+    "verification": "Verification",
     "verificationTab": "Verification",
     "profile": "Profile",
     "bio": "Bio",
@@ -171,7 +186,26 @@
     "revokeAllSessions": "Revoke All Sessions",
     "deleteAccount": "Delete Account",
     "noPhotos": "No photos uploaded.",
-    "noActivity": "No recent activity."
+    "noActivity": "No recent activity.",
+    "backToUsers": "Back to Users",
+    "notFound": "User not found.",
+    "notify": "Notify",
+    "activate": "Activate",
+    "suspend": "Suspend",
+    "ban": "Ban",
+    "shadowBan": "Shadow Ban",
+    "unShadowBan": "Un-Shadow Ban",
+    "analyzing": "Analyzing...",
+    "suspiciousAnalysis": "Suspicious Behavior Analysis",
+    "editUser": "Edit User",
+    "profileInfo": "Profile Information",
+    "noProfile": "No profile created yet.",
+    "accountDetails": "Account Details",
+    "freePlan": "Free plan — No active subscription",
+    "verificationStatus": "Verification Status",
+    "trustSafetyScore": "Trust & Safety Score",
+    "sendNotifTo": "Send Notification to",
+    "sendNotifDesc": "This will send a push notification to this user."
   },
   "reports": {
     "title": "Reports",
@@ -209,7 +243,10 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "noPhotos": "No pending photos.",
-    "moderationNote": "Moderation note (optional)"
+    "moderationNote": "Moderation note (optional)",
+    "pendingModeration": "photos pending moderation",
+    "noPending": "No pending photos",
+    "allModerated": "All photos have been moderated."
   },
   "verification": {
     "title": "Verification Center",
@@ -221,7 +258,24 @@
     "approve": "Approve",
     "reject": "Reject",
     "note": "Note (optional)",
-    "noItems": "No pending verification items."
+    "noItems": "No pending verification items.",
+    "selfie": "Selfie",
+    "main": "Main",
+    "pendingReview": "Pending Review",
+    "selfieVerifications": "Selfie Verifications",
+    "profilePhotos": "Profile Photos",
+    "allPending": "All Pending",
+    "approvePhoto": "Approve Photo",
+    "rejectPhoto": "Reject Photo",
+    "approveDesc": "This photo will be approved and visible on the user's profile.",
+    "rejectDesc": "This photo will be rejected. The user will be notified.",
+    "allCaughtUp": "All caught up!",
+    "noPending": "No pending items in this category.",
+    "moderationFailed": "Failed to moderate photo",
+    "documents": "Documents",
+    "noDocsPending": "No pending document verifications.",
+    "docApprovedDesc": "User verification has been approved and status set to active.",
+    "docRejectedDesc": "User verification has been rejected."
   },
   "analytics": {
     "title": "Analytics",
@@ -231,6 +285,8 @@
     "likesToMatches": "Likes to Matches",
     "retentionRate": "Retention Rate",
     "cohort7day": "7-day cohort",
+    "sevenDayCohort": "7-day cohort",
+    "likeToMatchConversion": "Like-to-Match Conversion",
     "matchesToday": "Matches Today",
     "matchesOverTime": "Matches Over Time (30 days)",
     "platformOverview": "Platform Overview",
@@ -275,7 +331,8 @@
     "sendReply": "Send Reply",
     "update": "Update",
     "reply": "Reply",
-    "noTickets": "No tickets found."
+    "noTickets": "No tickets found.",
+    "allTickets": "All Tickets"
   },
   "subscriptions": {
     "title": "Subscriptions & Boosts",
@@ -431,8 +488,29 @@
     "conversionFunnel": "Conversion Funnel"
   },
   "activity": {
-    "title": "Activity Feed",
-    "subtitle": "Monitor user swipes and engagement"
+    "title": "Activity Monitor",
+    "subtitle": "See who liked, disliked, super-liked, and complimented who"
+  },
+  "matches": {
+    "unmatch": "Unmatch",
+    "unmatchConfirm": "This will remove the match between these two users. This action cannot be undone."
+  },
+  "searchUsers": {
+    "title": "Search & Discovery",
+    "subtitle": "Search user profiles with advanced filters",
+    "filters": "Filters",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "minAge": "Min Age",
+    "maxAge": "Max Age",
+    "city": "City",
+    "country": "Country",
+    "ethnicity": "Ethnicity",
+    "religiousLevel": "Religious Level",
+    "search": "Search",
+    "results": "Results",
+    "noResults": "No results. Use the filters above and click Search."
   },
   "auditLogs": {
     "title": "Audit Logs",
@@ -453,7 +531,11 @@
   },
   "notifications": {
     "title": "Notifications",
-    "subtitle": "User notification center"
+    "subtitle": "Monitor and manage system notifications",
+    "unread": "Unread",
+    "settings": "Notification Settings",
+    "markAllRead": "Mark All Read",
+    "noNotifications": "No notifications."
   },
   "guide": {
     "title": "How It Works",
@@ -531,7 +613,11 @@
     "back": "Back",
     "next": "Next",
     "previous": "Previous",
-    "noData": "No data found."
+    "noData": "No data found.",
+    "other": "Other",
+    "total": "Total",
+    "error": "Error",
+    "send": "Send"
   },
   "login": {
     "title": "Admin Login",

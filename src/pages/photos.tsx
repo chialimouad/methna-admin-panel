@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,6 +18,7 @@ import { formatDateTime } from '@/lib/utils'
 import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Loader2, ImageIcon } from 'lucide-react'
 
 export default function PhotosPage() {
+  const { t } = useTranslation()
   const [photos, setPhotos] = useState<Photo[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -66,7 +68,7 @@ export default function PhotosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">{total} photos pending moderation</p>
+          <p className="text-sm text-muted-foreground">{total} {t('photos.pendingModeration')}</p>
         </div>
       </div>
 
@@ -78,8 +80,8 @@ export default function PhotosPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
             <ImageIcon className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <p className="text-lg font-medium text-muted-foreground">No pending photos</p>
-            <p className="text-sm text-muted-foreground">All photos have been moderated.</p>
+            <p className="text-lg font-medium text-muted-foreground">{t('photos.noPending')}</p>
+            <p className="text-sm text-muted-foreground">{t('photos.allModerated')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -113,7 +115,7 @@ export default function PhotosPage() {
                       className="flex-1 gap-1"
                       onClick={() => setModerateDialog({ open: true, photo, action: 'APPROVED' })}
                     >
-                      <CheckCircle className="h-3.5 w-3.5" /> Approve
+                      <CheckCircle className="h-3.5 w-3.5" /> {t('photos.approve')}
                     </Button>
                     <Button
                       size="sm"
@@ -121,7 +123,7 @@ export default function PhotosPage() {
                       className="flex-1 gap-1"
                       onClick={() => setModerateDialog({ open: true, photo, action: 'REJECTED' })}
                     >
-                      <XCircle className="h-3.5 w-3.5" /> Reject
+                      <XCircle className="h-3.5 w-3.5" /> {t('photos.reject')}
                     </Button>
                   </div>
                 </div>
@@ -133,7 +135,7 @@ export default function PhotosPage() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+          <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
               <ChevronLeft className="h-4 w-4" />
@@ -150,7 +152,7 @@ export default function PhotosPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {moderateDialog.action === 'APPROVED' ? 'Approve Photo' : 'Reject Photo'}
+              {moderateDialog.action === 'APPROVED' ? t('photos.approve') : t('photos.reject')}
             </DialogTitle>
             <DialogDescription>
               {moderateDialog.action === 'APPROVED'
@@ -172,13 +174,13 @@ export default function PhotosPage() {
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setModerateDialog({ open: false, photo: null, action: 'APPROVED' })}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant={moderateDialog.action === 'APPROVED' ? 'default' : 'destructive'}
               onClick={handleModerate}
             >
-              {moderateDialog.action === 'APPROVED' ? 'Approve' : 'Reject'}
+              {moderateDialog.action === 'APPROVED' ? t('photos.approve') : t('photos.reject')}
             </Button>
           </DialogFooter>
         </DialogContent>

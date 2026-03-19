@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { trustSafetyApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -48,6 +49,7 @@ const sourceBadge = (source: string) => {
 }
 
 export default function TrustSafetyPage() {
+  const { t } = useTranslation()
   const [flags, setFlags] = useState<ContentFlag[]>([])
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -115,7 +117,7 @@ export default function TrustSafetyPage() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
-            Suspicious Behavior Detection
+            {t('trustSafety.suspiciousDetection')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -123,7 +125,7 @@ export default function TrustSafetyPage() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Enter User ID to analyze..."
+                placeholder={t('trustSafety.enterUserId')}
                 value={detectUserId}
                 onChange={(e) => setDetectUserId(e.target.value)}
                 className="pl-9"
@@ -131,7 +133,7 @@ export default function TrustSafetyPage() {
             </div>
             <Button onClick={handleDetect} disabled={detectLoading || !detectUserId.trim()}>
               {detectLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
-              Analyze
+              {t('trustSafety.analyze')}
             </Button>
           </div>
 
@@ -142,14 +144,14 @@ export default function TrustSafetyPage() {
               ) : (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Suspicious:</span>
+                    <span className="text-sm font-medium">{t('trustSafety.suspicious')}:</span>
                     <Badge variant={detectResult.isSuspicious ? 'destructive' : 'success'}>
-                      {detectResult.isSuspicious ? 'YES' : 'NO'}
+                      {detectResult.isSuspicious ? t('trustSafety.yes') : t('trustSafety.no')}
                     </Badge>
                   </div>
                   {detectResult.reasons?.length > 0 && (
                     <div>
-                      <span className="text-sm font-medium">Reasons:</span>
+                      <span className="text-sm font-medium">{t('trustSafety.reasons')}:</span>
                       <div className="mt-1 flex flex-wrap gap-1">
                         {detectResult.reasons.map((r: string, i: number) => (
                           <Badge key={i} variant="warning">{r}</Badge>
@@ -158,7 +160,7 @@ export default function TrustSafetyPage() {
                     </div>
                   )}
                   {detectResult.trustScore != null && (
-                    <p className="text-sm">Trust Score: <strong>{detectResult.trustScore}</strong></p>
+                    <p className="text-sm">{t('trustSafety.trustScore')}: <strong>{detectResult.trustScore}</strong></p>
                   )}
                 </div>
               )}
@@ -170,7 +172,7 @@ export default function TrustSafetyPage() {
       {/* Content Flags Table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Pending Content Flags ({total})</CardTitle>
+          <CardTitle className="text-lg">{t('trustSafety.contentFlags')} ({total})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -182,13 +184,13 @@ export default function TrustSafetyPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
-                    <th className="pb-3 pr-4 font-medium">Type</th>
-                    <th className="pb-3 pr-4 font-medium">Source</th>
-                    <th className="pb-3 pr-4 font-medium">Entity</th>
-                    <th className="pb-3 pr-4 font-medium">Content</th>
-                    <th className="pb-3 pr-4 font-medium">Confidence</th>
-                    <th className="pb-3 pr-4 font-medium">Date</th>
-                    <th className="pb-3 font-medium text-right">Actions</th>
+                    <th className="pb-3 pe-4 font-medium">{t('trustSafety.type')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('trustSafety.source')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('trustSafety.entity')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('trustSafety.content')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('trustSafety.confidence')}</th>
+                    <th className="pb-3 pe-4 font-medium">{t('trustSafety.date')}</th>
+                    <th className="pb-3 font-medium text-end">{t('trustSafety.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -222,7 +224,7 @@ export default function TrustSafetyPage() {
                             setResolveStatus('ACTION_TAKEN')
                           }}
                         >
-                          <CheckCircle className="h-3.5 w-3.5" /> Resolve
+                          <CheckCircle className="h-3.5 w-3.5" /> {t('trustSafety.resolve')}
                         </Button>
                       </td>
                     </tr>
@@ -230,14 +232,14 @@ export default function TrustSafetyPage() {
                 </tbody>
               </table>
               {flags.length === 0 && (
-                <p className="py-8 text-center text-muted-foreground">No pending flags.</p>
+                <p className="py-8 text-center text-muted-foreground">{t('trustSafety.noFlags')}</p>
               )}
             </div>
           )}
 
           {totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between border-t pt-4">
-              <p className="text-sm text-muted-foreground">Page {page} of {totalPages}</p>
+              <p className="text-sm text-muted-foreground">{t('common.page')} {page} {t('common.of')} {totalPages}</p>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>
                   <ChevronLeft className="h-4 w-4" />
@@ -255,7 +257,7 @@ export default function TrustSafetyPage() {
       <Dialog open={resolveDialog.open} onOpenChange={(open) => setResolveDialog({ ...resolveDialog, open })}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Resolve Content Flag</DialogTitle>
+            <DialogTitle>{t('trustSafety.resolveFlag')}</DialogTitle>
             <DialogDescription>
               Flag type: <strong>{resolveDialog.flag?.type}</strong> on {resolveDialog.flag?.entityType}
             </DialogDescription>
@@ -271,19 +273,19 @@ export default function TrustSafetyPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ACTION_TAKEN">Action Taken</SelectItem>
-              <SelectItem value="REVIEWED">Reviewed (no action)</SelectItem>
-              <SelectItem value="DISMISSED">Dismissed</SelectItem>
+              <SelectItem value="ACTION_TAKEN">{t('trustSafety.actionTaken')}</SelectItem>
+              <SelectItem value="REVIEWED">{t('trustSafety.reviewedNoAction')}</SelectItem>
+              <SelectItem value="DISMISSED">{t('trustSafety.dismissed')}</SelectItem>
             </SelectContent>
           </Select>
           <Textarea
-            placeholder="Review note (optional)"
+            placeholder={t('trustSafety.reviewNote')}
             value={reviewNote}
             onChange={(e) => setReviewNote(e.target.value)}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setResolveDialog({ open: false, flag: null })}>Cancel</Button>
-            <Button onClick={handleResolve}>Submit</Button>
+            <Button variant="outline" onClick={() => setResolveDialog({ open: false, flag: null })}>{t('common.cancel')}</Button>
+            <Button onClick={handleResolve}>{t('common.submit')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

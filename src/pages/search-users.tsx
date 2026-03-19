@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { searchApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -16,6 +17,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Loader2, Search, Eye, MapPin } from 'lucide-react'
 
 export default function SearchUsersPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -56,60 +58,60 @@ export default function SearchUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Search & Discovery</h1>
-        <p className="text-muted-foreground">Search user profiles with advanced filters</p>
+        <h1 className="text-2xl font-bold">{t('searchUsers.title')}</h1>
+        <p className="text-muted-foreground">{t('searchUsers.subtitle')}</p>
       </div>
 
       {/* Filters */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center gap-2">
-            <Search className="h-5 w-5" /> Filters
+            <Search className="h-5 w-5" /> {t('searchUsers.filters')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Gender</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.gender')}</label>
               <Select value={gender} onValueChange={setGender}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="all">{t('common.all')}</SelectItem>
+                  <SelectItem value="male">{t('searchUsers.male')}</SelectItem>
+                  <SelectItem value="female">{t('searchUsers.female')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Min Age</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.minAge')}</label>
               <Input type="number" placeholder="18" value={minAge} onChange={(e) => setMinAge(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Max Age</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.maxAge')}</label>
               <Input type="number" placeholder="60" value={maxAge} onChange={(e) => setMaxAge(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">City</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.city')}</label>
               <Input placeholder="Any city" value={city} onChange={(e) => setCity(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Country</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.country')}</label>
               <Input placeholder="Any country" value={country} onChange={(e) => setCountry(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Ethnicity</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.ethnicity')}</label>
               <Input placeholder="Any" value={ethnicity} onChange={(e) => setEthnicity(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Religious Level</label>
+              <label className="text-xs font-medium text-muted-foreground">{t('searchUsers.religiousLevel')}</label>
               <Input placeholder="Any" value={religiousLevel} onChange={(e) => setReligiousLevel(e.target.value)} />
             </div>
             <div className="flex items-end">
               <Button onClick={handleSearch} disabled={loading} className="w-full gap-2">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                Search
+                {t('searchUsers.search')}
               </Button>
             </div>
           </div>
@@ -119,7 +121,7 @@ export default function SearchUsersPage() {
       {/* Results */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">Results ({total})</CardTitle>
+          <CardTitle className="text-lg">{t('searchUsers.results')} ({total})</CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -128,7 +130,7 @@ export default function SearchUsersPage() {
             </div>
           ) : results.length === 0 ? (
             <p className="py-8 text-center text-muted-foreground">
-              No results. Use the filters above and click Search.
+              {t('searchUsers.noResults')}
             </p>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
