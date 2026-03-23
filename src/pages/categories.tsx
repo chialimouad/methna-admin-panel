@@ -143,10 +143,18 @@ export default function CategoriesPage() {
     if (!form.name.trim()) return
     setSaving(true)
     try {
-      const payload = {
-        ...form,
-        rules: form.rules.filter(r => r.field && r.operator),
+      // Clean payload: strip empty optional fields to avoid DTO validation issues
+      const validRules = form.rules.filter(r => r.field && r.operator)
+      const payload: Record<string, any> = {
+        name: form.name.trim(),
+        status: form.status,
+        sortOrder: form.sortOrder,
+        color: form.color,
       }
+      if (form.description.trim()) payload.description = form.description.trim()
+      if (form.icon.trim()) payload.icon = form.icon.trim()
+      if (validRules.length > 0) payload.rules = validRules
+
       if (editingId) {
         await categoriesApi.update(editingId, payload)
         toast({ title: 'Category Updated', variant: 'success' })
@@ -157,7 +165,9 @@ export default function CategoriesPage() {
       resetForm()
       fetchCategories()
     } catch (err: any) {
-      toast({ title: 'Error', description: err?.response?.data?.message || 'Failed to save', variant: 'error' })
+      const msg = err?.response?.data?.message
+      const description = Array.isArray(msg) ? msg.join(', ') : (msg || 'Failed to save category')
+      toast({ title: 'Error', description, variant: 'error' })
     } finally {
       setSaving(false)
     }
