@@ -163,6 +163,17 @@ export default function CategoriesPage() {
     }
   }
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this category? This cannot be undone.')) return
+    try {
+      await categoriesApi.remove(id)
+      toast({ title: 'Category Deleted', variant: 'warning' })
+      fetchCategories()
+    } catch (err: any) {
+      toast({ title: 'Error', description: err?.response?.data?.message || 'Failed to delete', variant: 'error' })
+    }
+  }
+
   const handleRebuild = async (id: string) => {
     setRebuilding(id)
     try {
@@ -310,12 +321,12 @@ export default function CategoriesPage() {
           ) : categories.map(cat => (
             <Card key={cat.id} className="overflow-hidden">
               <div className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => setExpandedId(expandedId === cat.id ? null : cat.id)}>
-                <div 
-                  className="h-3 w-3 rounded-full shrink-0" 
-                  style={{ 
-                    backgroundColor: cat.color || '#2d7a4f', 
-                    boxShadow: `0 0 0 2px ${cat.color || '#2d7a4f'}33` // Fix: Removed invalid ringColor property
-                  }} 
+                <div
+                  className="h-3 w-3 rounded-full shrink-0"
+                  style={{
+                    backgroundColor: cat.color || '#2d7a4f',
+                    boxShadow: `0 0 0 2px ${cat.color || '#2d7a4f'}33`,
+                  }}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -333,7 +344,7 @@ export default function CategoriesPage() {
                   <div className="flex items-center gap-1">
                     <Button size="icon" variant="ghost" onClick={e => { e.stopPropagation(); openEdit(cat) }}><Pencil className="h-4 w-4" /></Button>
                     <Button size="icon" variant="ghost" disabled={rebuilding === cat.id} onClick={e => { e.stopPropagation(); handleRebuild(cat.id) }}><RefreshCw className={cn('h-4 w-4', rebuilding === cat.id && 'animate-spin')} /></Button>
-                    <Button size="icon" variant="ghost" className="text-red-500" onClick={e => { e.stopPropagation(); if(confirm('Delete?')) categoriesApi.remove(cat.id).then(fetchCategories) }}><Trash2 className="h-4 w-4" /></Button>
+                    <Button size="icon" variant="ghost" className="text-red-500" onClick={e => { e.stopPropagation(); handleDelete(cat.id) }}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                   {expandedId === cat.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </div>

@@ -73,44 +73,6 @@ const actionColors: Record<string, string> = {
   default: 'text-gray-600 bg-gray-50',
 }
 
-// Mock data generator since backend may not have a dedicated audit log endpoint yet
-function generateMockAuditLogs(): AuditLog[] {
-  const actions = [
-    { action: 'user_status_change', target: 'User', details: 'Changed status from active to suspended' },
-    { action: 'user_create', target: 'User', details: 'Created new user account' },
-    { action: 'photo_moderate', target: 'Photo', details: 'Approved photo submission' },
-    { action: 'report_resolve', target: 'Report', details: 'Resolved report - dismissed' },
-    { action: 'notification_send', target: 'Notification', details: 'Sent broadcast notification' },
-    { action: 'shadow_ban', target: 'User', details: 'Shadow banned user for suspicious activity' },
-    { action: 'ticket_reply', target: 'Ticket', details: 'Replied to support ticket' },
-    { action: 'user_update', target: 'User', details: 'Updated user role to moderator' },
-    { action: 'user_delete', target: 'User', details: 'Soft deleted user account' },
-    { action: 'photo_moderate', target: 'Photo', details: 'Rejected photo - inappropriate content' },
-  ]
-
-  const admins = [
-    { id: 'admin-1', name: 'Admin User' },
-    { id: 'admin-2', name: 'Moderator' },
-  ]
-
-  return Array.from({ length: 50 }, (_, i) => {
-    const a = actions[i % actions.length]
-    const admin = admins[i % admins.length]
-    const date = new Date()
-    date.setMinutes(date.getMinutes() - i * 37)
-    return {
-      id: `log-${i}`,
-      adminId: admin.id,
-      adminName: admin.name,
-      action: a.action,
-      target: a.target,
-      targetId: `target-${Math.floor(Math.random() * 1000)}`,
-      details: a.details,
-      ip: '192.168.1.' + (Math.floor(Math.random() * 254) + 1),
-      timestamp: date.toISOString(),
-    }
-  })
-}
 
 export default function AuditLogsPage() {
   const { t } = useTranslation()
@@ -124,18 +86,15 @@ export default function AuditLogsPage() {
 
   useEffect(() => {
     setLoading(true)
-    // Try to load from Redis audit logs endpoint, fallback to mock
     api.get('/admin/audit-logs', { params: { page, limit } })
       .then((res) => {
         const data = res.data
-        if (data?.logs?.length) {
-          setLogs(data.logs)
-        } else {
-          setLogs(generateMockAuditLogs())
-        }
+        const list = data?.logs || (Array.isArray(data) ? data : [])
+        setLogs(list)
       })
-      .catch(() => {
-        setLogs(generateMockAuditLogs())
+      .catch((err) => {
+        console.error('Failed to fetch audit logs:', err)
+        setLogs([])
       })
       .finally(() => setLoading(false))
   }, [page])
