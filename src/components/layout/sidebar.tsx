@@ -77,6 +77,12 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    titleKey: 'Content',
+    items: [
+      { to: '/content', icon: FileText, labelKey: 'Content CMS' }
+    ]
+  },
+  {
     titleKey: 'nav.social',
     icon: Heart,
     items: [
