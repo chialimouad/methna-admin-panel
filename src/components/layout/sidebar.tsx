@@ -37,6 +37,7 @@ import {
   BookOpen,
   Layers,
   Sparkles,
+  Rocket,
   type LucideIcon,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -276,8 +277,21 @@ export function Sidebar() {
             )
           })}
 
-          {/* Guide link */}
-          <div className="mt-2 pt-2 border-t border-sidebar-accent/40">
+          {/* Guide & External links */}
+          <div className="mt-2 pt-2 border-t border-sidebar-accent/40 space-y-1">
+            <a
+              href="https://github.com/chialimouad/methna-admin-panel"
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all',
+                'text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
+              )}
+            >
+              <Rocket className="h-4 w-4 shrink-0" />
+              {!collapsed && <span className="flex-1 truncate">{t('Deploy Admin Panel')}</span>}
+            </a>
+
             <NavLink
               to="/guide"
               className={cn(
